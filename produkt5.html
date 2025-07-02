@@ -5,27 +5,130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Produkt 5 - Mein Shop</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; }
-    img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    a {
+      text-decoration: none;
+      color: #0066cc;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
     h1 { margin-bottom: 10px; }
-    .preis { font-size: 1.5em; color: green; margin-bottom: 20px; }
-    .beschreibung { margin-bottom: 20px; }
-    .bilderzusatz img { max-width: 48%; margin: 1%; border-radius: 6px; }
-    a { text-decoration: none; color: blue; }
-    a:hover { text-decoration: underline; }
+    .preis {
+      font-size: 1.5em;
+      color: green;
+      margin-bottom: 20px;
+    }
+    .beschreibung {
+      margin-top: 20px;
+      line-height: 1.4;
+    }
+    .slider {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .slides {
+      display: flex;
+      transition: transform 0.4s ease-in-out;
+      touch-action: pan-y;
+      user-select: none;
+    }
+    .slides img {
+      width: 100%;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      font-size: 22px;
+      z-index: 10;
+    }
+    .arrow-left { left: 10px; }
+    .arrow-right { right: 10px; }
   </style>
 </head>
 <body>
   <a href="index.html">&larr; Zurück zum Shop</a>
   <h1>Produkt 5</h1>
-  <div class="preis">19,99 €</div>
+  <div class="preis">39,99 €</div>
+
+  <div class="slider" id="slider">
+    <div class="slides" id="slides">
+      <img src="https://via.placeholder.com/600x400?text=Produkt+5+Bild+1" alt="Bild 1" />
+      <img src="https://via.placeholder.com/600x400?text=Produkt+5+Bild+2" alt="Bild 2" />
+      <img src="https://via.placeholder.com/600x400?text=Produkt+5+Bild+3" alt="Bild 3" />
+    </div>
+    <button class="arrow arrow-left" id="prev">&#10094;</button>
+    <button class="arrow arrow-right" id="next">&#10095;</button>
+  </div>
+
   <div class="beschreibung">
-    <p>Hier kommt die ausführliche Beschreibung von Produkt 5. Du kannst Text, Details und wichtige Infos hier hinzufügen.</p>
+    <p>Hier steht die ausführliche Beschreibung für Produkt 5 mit allen wichtigen Details.</p>
   </div>
-  <img src="https://via.placeholder.com/600x400?text=Produkt+5+Hauptbild" alt="Produkt 5 Hauptbild" />
-  <div class="bilderzusatz">
-    <img src="https://via.placeholder.com/290x190?text=Bild+1" alt="Zusatzbild 1" />
-    <img src="https://via.placeholder.com/290x190?text=Bild+2" alt="Zusatzbild 2" />
-  </div>
+
+  <script>
+    const slides = document.getElementById('slides');
+    const totalSlides = slides.children.length;
+    let index = 0;
+
+    document.getElementById('next').addEventListener('click', () => {
+      index = (index + 1) % totalSlides;
+      slides.style.transform = `translateX(${-index * 100}%)`;
+    });
+
+    document.getElementById('prev').addEventListener('click', () => {
+      index = (index - 1 + totalSlides) % totalSlides;
+      slides.style.transform = `translateX(${-index * 100}%)`;
+    });
+
+    let startX = 0;
+    let isDragging = false;
+
+    slides.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+
+    slides.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const currentX = e.touches[0].clientX;
+      const diffX = startX - currentX;
+
+      if (diffX > 50) {
+        index = (index + 1) % totalSlides;
+        slides.style.transform = `translateX(${-index * 100}%)`;
+        isDragging = false;
+      } else if (diffX < -50) {
+        index = (index - 1 + totalSlides) % totalSlides;
+        slides.style.transform = `translateX(${-index * 100}%)`;
+        isDragging = false;
+      }
+    });
+
+    slides.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+  </script>
 </body>
 </html>
