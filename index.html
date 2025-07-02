@@ -1,91 +1,57 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mein Shop</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-  h1 { text-align: center; }
-  .products {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-  }
-  .product {
-    background: white; border: 1px solid #ddd; border-radius: 8px;
-    width: 45%; padding: 15px; box-sizing: border-box;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .product img {
-    width: 100%; height: auto; border-radius: 5px;
-  }
-  .product h2 {
-    font-size: 1.2rem; margin: 10px 0 5px;
-  }
-  .price {
-    color: #28a745; font-weight: bold; margin-bottom: 10px;
-  }
-  .buy-btn {
-    display: inline-block; padding: 10px 15px; background: #007bff;
-    color: white; text-decoration: none; border-radius: 5px;
-    font-weight: bold;
-  }
-  .buy-btn:hover {
-    background: #0056b3;
-  }
-  @media (max-width: 600px) {
-    .product { width: 100%; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mein Shop</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h1 { text-align: center; }
+    .produkte { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .produkt {
+      border: 1px solid #ccc; border-radius: 8px; width: 42%;
+      box-sizing: border-box; padding: 10px; text-align: center;
+      cursor: pointer; transition: box-shadow 0.3s;
+    }
+    .produkt:hover { box-shadow: 0 0 10px #888; }
+    .produkt img { max-width: 100%; border-radius: 5px; }
+    .name { font-weight: bold; margin: 10px 0 5px; }
+    .preis { color: green; font-size: 1.2em; }
+  </style>
 </head>
 <body>
-
-<h1>Mein Shop</h1>
-
-<div class="products">
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+1" alt="Produkt 1" />
-    <h2>Produkt 1</h2>
-    <div class="price">19,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 1&body=Ich möchte Produkt 1 kaufen">Jetzt kaufen</a>
+  <h1>Mein Shop</h1>
+  <div class="produkte">
+    <a href="produkt1.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1" />
+      <div class="name">Produkt 1</div>
+      <div class="preis">29,99 €</div>
+    </a>
+    <a href="produkt2.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2" />
+      <div class="name">Produkt 2</div>
+      <div class="preis">19,99 €</div>
+    </a>
+    <a href="produkt3.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3" />
+      <div class="name">Produkt 3</div>
+      <div class="preis">39,99 €</div>
+    </a>
+    <a href="produkt4.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4" />
+      <div class="name">Produkt 4</div>
+      <div class="preis">24,99 €</div>
+    </a>
+    <a href="produkt5.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5" />
+      <div class="name">Produkt 5</div>
+      <div class="preis">14,99 €</div>
+    </a>
+    <a href="produkt6.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6" />
+      <div class="name">Produkt 6</div>
+      <div class="preis">49,99 €</div>
+    </a>
   </div>
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+2" alt="Produkt 2" />
-    <h2>Produkt 2</h2>
-    <div class="price">29,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 2&body=Ich möchte Produkt 2 kaufen">Jetzt kaufen</a>
-  </div>
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+3" alt="Produkt 3" />
-    <h2>Produkt 3</h2>
-    <div class="price">39,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 3&body=Ich möchte Produkt 3 kaufen">Jetzt kaufen</a>
-  </div>
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+4" alt="Produkt 4" />
-    <h2>Produkt 4</h2>
-    <div class="price">49,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 4&body=Ich möchte Produkt 4 kaufen">Jetzt kaufen</a>
-  </div>
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+5" alt="Produkt 5" />
-    <h2>Produkt 5</h2>
-    <div class="price">59,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 5&body=Ich möchte Produkt 5 kaufen">Jetzt kaufen</a>
-  </div>
-
-  <div class="product">
-    <img src="https://via.placeholder.com/400x300?text=Produkt+6" alt="Produkt 6" />
-    <h2>Produkt 6</h2>
-    <div class="price">69,99 €</div>
-    <a class="buy-btn" href="mailto:online.shop551552@gmail.com?subject=Bestellung Produkt 6&body=Ich möchte Produkt 6 kaufen">Jetzt kaufen</a>
-  </div>
-
-</div>
-
 </body>
 </html>
