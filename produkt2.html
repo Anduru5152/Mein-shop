@@ -2,30 +2,62 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Produkt 2 - Mein Shop</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; }
-    img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    .slider { position: relative; max-width: 100%; margin-bottom: 20px; }
+    .slides { display: none; width: 100%; border-radius: 10px; }
+    .prev, .next {
+      cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px;
+      margin-top: -22px; color: white; font-weight: bold; font-size: 18px;
+      transition: 0.3s; border-radius: 0 3px 3px 0;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .next { right: 0; border-radius: 3px 0 0 3px; }
+    .prev:hover, .next:hover { background-color: rgba(0,0,0,0.8); }
     h1 { margin-bottom: 10px; }
-    .preis { font-size: 1.5em; color: green; margin-bottom: 20px; }
-    .beschreibung { margin-bottom: 20px; }
-    .bilderzusatz img { max-width: 48%; margin: 1%; border-radius: 6px; }
+    .preis { font-size: 1.4em; color: green; margin-bottom: 15px; }
+    .beschreibung { margin-bottom: 30px; }
     a { text-decoration: none; color: blue; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <a href="index.html">&larr; Zurück zum Shop</a>
-  <h1>Produkt 2</h1>
-  <div class="preis">39,99 €</div>
-  <div class="beschreibung">
-    <p>Hier kommt die ausführliche Beschreibung von Produkt 2. Du kannst Text, Details und wichtige Infos hier hinzufügen.</p>
-  </div>
-  <img src="https://via.placeholder.com/600x400?text=Produkt+2+Hauptbild" alt="Produkt 2 Hauptbild" />
-  <div class="bilderzusatz">
-    <img src="https://via.placeholder.com/290x190?text=Bild+1" alt="Zusatzbild 1" />
-    <img src="https://via.placeholder.com/290x190?text=Bild+2" alt="Zusatzbild 2" />
-  </div>
+
+<a href="index.html">&larr; Zurück zum Shop</a>
+<h1>Produkt 2</h1>
+<div class="preis">39,99 €</div>
+<div class="beschreibung">
+  <p>Dies ist die Beschreibung für Produkt 2. Hier kannst du alles über das Produkt erzählen.</p>
+</div>
+
+<div class="slider">
+  <img class="slides" src="https://via.placeholder.com/800x500?text=Produkt+2+Bild+1" alt="Bild 1">
+  <img class="slides" src="https://via.placeholder.com/800x500?text=Produkt+2+Bild+2" alt="Bild 2">
+  <img class="slides" src="https://via.placeholder.com/800x500?text=Produkt+2+Bild+3" alt="Bild 3">
+
+  <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+  <a class="next" onclick="plusSlides(1)">&#10095;</a>
+</div>
+
+<script>
+  let slideIndex = 1;
+  showSlides(slideIndex);
+  function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
+  function showSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("slides");
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    slides[slideIndex - 1].style.display = "block";
+  }
+</script>
+
 </body>
 </html>
