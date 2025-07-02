@@ -30,13 +30,13 @@
       margin-bottom: 20px;
     }
     .beschreibung {
-      margin-bottom: 20px;
+      margin-top: 20px;
       line-height: 1.4;
     }
     .slider {
       position: relative;
       max-width: 600px;
-      margin: 0 auto 20px auto;
+      margin: 0 auto;
       overflow: hidden;
       border-radius: 8px;
       background: white;
@@ -79,63 +79,66 @@
   <a href="index.html">&larr; Zurück zum Shop</a>
   <h1>Produkt 1</h1>
   <div class="preis">29,99 €</div>
-  <div class="beschreibung">
-    <p>Das ist die ausführliche Produktbeschreibung für Produkt 1. Hier kannst du alle wichtigen Infos und Details zum Produkt schreiben.</p>
+
+  <div class="slider" id="slider1">
+    <div class="slides" id="slides1">
+      <img src="https://via.placeholder.com/600x400?text=Produkt+1+Bild+1" alt="Bild 1" />
+      <img src="https://via.placeholder.com/600x400?text=Produkt+1+Bild+2" alt="Bild 2" />
+      <img src="https://via.placeholder.com/600x400?text=Produkt+1+Bild+3" alt="Bild 3" />
+    </div>
+    <button class="arrow arrow-left" onclick="prev(1)">&#10094;</button>
+    <button class="arrow arrow-right" onclick="next(1)">&#10095;</button>
   </div>
 
-  <div class="slider" id="slider">
-    <div class="slides" id="slides">
-      <img src="https://via.placeholder.com/600x400?text=Bild+1" alt="Produktbild 1" />
-      <img src="https://via.placeholder.com/600x400?text=Bild+2" alt="Produktbild 2" />
-      <img src="https://via.placeholder.com/600x400?text=Bild+3" alt="Produktbild 3" />
-    </div>
-    <button class="arrow arrow-left" id="prev">&#10094;</button>
-    <button class="arrow arrow-right" id="next">&#10095;</button>
+  <div class="beschreibung">
+    <p>Ausführliche Beschreibung für Produkt 1. Alle wichtigen Informationen, Materialien, Nutzungshinweise usw.</p>
   </div>
 
   <script>
-    const slides = document.getElementById('slides');
-    const totalSlides = slides.children.length;
-    let index = 0;
-
-    document.getElementById('next').addEventListener('click', () => {
-      index = (index + 1) % totalSlides;
+    function next(id) {
+      const slides = document.getElementById('slides' + id);
+      const total = slides.children.length;
+      let index = parseInt(slides.dataset.index || 0);
+      index = (index + 1) % total;
       slides.style.transform = `translateX(${-index * 100}%)`;
-    });
+      slides.dataset.index = index;
+    }
 
-    document.getElementById('prev').addEventListener('click', () => {
-      index = (index - 1 + totalSlides) % totalSlides;
+    function prev(id) {
+      const slides = document.getElementById('slides' + id);
+      const total = slides.children.length;
+      let index = parseInt(slides.dataset.index || 0);
+      index = (index - 1 + total) % total;
       slides.style.transform = `translateX(${-index * 100}%)`;
-    });
+      slides.dataset.index = index;
+    }
 
-    // Touch support for swipe on mobile
-    let startX = 0;
-    let isDragging = false;
+    // Swipe-Unterstützung
+    for (let i = 1; i <= 6; i++) {
+      const slider = document.getElementById('slides' + i);
+      if (!slider) continue;
 
-    slides.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      isDragging = true;
-    });
+      let startX = 0;
+      let isDragging = false;
 
-    slides.addEventListener('touchmove', e => {
-      if (!isDragging) return;
-      const currentX = e.touches[0].clientX;
-      const diffX = startX - currentX;
+      slider.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      });
 
-      if (diffX > 50) { // swipe left
-        index = (index + 1) % totalSlides;
-        slides.style.transform = `translateX(${-index * 100}%)`;
+      slider.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const currentX = e.touches[0].clientX;
+        const diffX = startX - currentX;
+
+        if (diffX > 50) { next(i); isDragging = false; }
+        else if (diffX < -50) { prev(i); isDragging = false; }
+      });
+
+      slider.addEventListener('touchend', () => {
         isDragging = false;
-      } else if (diffX < -50) { // swipe right
-        index = (index - 1 + totalSlides) % totalSlides;
-        slides.style.transform = `translateX(${-index * 100}%)`;
-        isDragging = false;
-      }
-    });
-
-    slides.addEventListener('touchend', () => {
-      isDragging = false;
-    });
+      });
+    }
   </script>
 </body>
 </html>
