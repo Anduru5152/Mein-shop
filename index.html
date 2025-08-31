@@ -5,17 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Shop</title>
 <style>
-body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; max-width:900px; margin:auto; }
+body { font-family: Arial, sans-serif; background:#f0f0f0; margin:0; padding:0; }
 h1,h2 { text-align:center; margin-bottom:20px; }
-input, button { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;}
-button { background:#28a745; color:white; border:none; cursor:pointer; }
-button:hover { background:#218838; }
-#orSkip { text-align:center; margin-top:10px; cursor:pointer; color:#0066cc; }
-#orSkip:hover { text-decoration:underline; }
+button { cursor:pointer; border:none; border-radius:5px; padding:10px; font-size:1em; }
+button:hover { opacity:0.9; }
+input { width:100%; padding:10px; margin:5px 0 15px 0; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; color:#333; }
+input::placeholder { color:#aaa; }
 
-#shopSection { display:none; }
+.center-box { max-width:400px; margin:50px auto; padding:20px; background:white; border:1px solid #ccc; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+
+.green-btn { background:#28a745; color:white; width:100%; margin-bottom:10px; }
+.blue-btn { background:#0066cc; color:white; width:100%; }
+
+#loginScreen, #registerScreen, #shopSection { display:none; }
+
+#shopSection { max-width:900px; margin:20px auto; padding:20px; background:#f9f9f9; }
 .search-cart { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-input[type="text"] { width:70%; padding:8px; border-radius:5px; border:1px solid #ccc; }
+#searchInput { width:70%; padding:8px; border-radius:5px; border:1px solid #ccc; }
 .cart { position:relative; font-size:1.5em; cursor:pointer; }
 #cartCountBadge { position:absolute; bottom:-5px; right:-10px; background-color:#ff6600; color:white; border-radius:50%; width:18px; height:18px; font-size:0.75em; font-weight:bold; text-align:center; line-height:18px; display:none; }
 
@@ -30,34 +36,43 @@ button.kaufen:hover { background-color:#218838; }
 
 footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px solid #ccc; font-size:0.9em; color:#555; }
 
-@media(max-width:500px){ .produkt{ width:100%; } input[type="text"]{ width:60%; } }
+@media(max-width:500px){ .produkt{ width:100%; } #searchInput{ width:60%; } }
 </style>
 </head>
 <body>
 
-<h1>Willkommen</h1>
+<!-- STARTSCREEN -->
+<div id="startScreen" class="center-box">
+  <h1>Willkommen!</h1>
+  <p>Bist du zum ersten Mal hier?</p>
+  <button class="green-btn" onclick="showRegister()">Registrieren</button>
+  <p>Du hast bereits ein Konto?</p>
+  <button class="green-btn" onclick="showLogin()">Anmelden</button>
+  <div class="blue-btn" style="margin-top:15px;" onclick="skipLogin()">Ohne Anmeldung fortfahren</div>
+</div>
 
-<!-- LOGIN / REGISTRIERUNG -->
-<div id="loginSection">
-  <div id="loginForm">
-    <h2>Anmelden</h2>
-    <input type="email" id="loginEmail" placeholder="E-Mail">
-    <input type="password" id="loginPassword" placeholder="Passwort">
-    <button onclick="login()">Anmelden</button>
-  </div>
+<!-- REGISTRIERUNG -->
+<div id="registerScreen" class="center-box">
+  <h2>Registrierung</h2>
+  <p>Bitte füllen Sie alle Felder aus!</p>
+  <input type="text" id="regFirst" placeholder="Vorname">
+  <input type="text" id="regLast" placeholder="Nachname">
+  <input type="text" id="regAddress" placeholder="Straße, Hausnummer, Postleitzahl">
+  <input type="email" id="regEmail" placeholder="E-Mail-Adresse">
+  <input type="password" id="regPassword" placeholder="Passwort">
+  <input type="password" id="regPassword2" placeholder="Passwort wiederholen">
+  <button class="green-btn" onclick="register()">Registrieren</button>
+  <div class="blue-btn" onclick="backToStart()">Zurück</div>
+</div>
 
-  <hr>
-
-  <div id="registerForm">
-    <h2>Registrieren</h2>
-    <input type="text" id="regName" placeholder="Name">
-    <input type="email" id="regEmail" placeholder="E-Mail">
-    <input type="text" id="regAddress" placeholder="Adresse">
-    <input type="password" id="regPassword" placeholder="Passwort">
-    <button onclick="register()">Registrieren</button>
-  </div>
-
-  <div id="orSkip" onclick="skipLogin()">Ohne Anmeldung fortfahren</div>
+<!-- LOGIN -->
+<div id="loginScreen" class="center-box">
+  <h2>Anmelden</h2>
+  <p>Bitte geben Sie die Daten ein, die Sie bei der Registrierung benutzt haben!</p>
+  <input type="email" id="loginEmail" placeholder="E-Mail-Adresse">
+  <input type="password" id="loginPassword" placeholder="Passwort">
+  <button class="green-btn" onclick="login()">Anmelden</button>
+  <div class="blue-btn" onclick="backToStart()">Zurück</div>
 </div>
 
 <!-- SHOP -->
@@ -79,35 +94,30 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
       <div class="preis">29,99 €</div>
       <button class="kaufen" onclick="buyProduct('Produkt 1')">Jetzt kaufen</button>
     </div>
-
     <div class="produkt" data-name="Produkt 2">
       <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
       <div class="name">Produkt 2</div>
       <div class="preis">19,99 €</div>
       <button class="kaufen" onclick="buyProduct('Produkt 2')">Jetzt kaufen</button>
     </div>
-
     <div class="produkt" data-name="Produkt 3">
       <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
       <div class="name">Produkt 3</div>
       <div class="preis">39,99 €</div>
       <button class="kaufen" onclick="buyProduct('Produkt 3')">Jetzt kaufen</button>
     </div>
-
     <div class="produkt" data-name="Produkt 4">
       <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4">
       <div class="name">Produkt 4</div>
       <div class="preis">24,99 €</div>
       <button class="kaufen" onclick="buyProduct('Produkt 4')">Jetzt kaufen</button>
     </div>
-
     <div class="produkt" data-name="Produkt 5">
       <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5">
       <div class="name">Produkt 5</div>
       <div class="preis">14,99 €</div>
       <button class="kaufen" onclick="buyProduct('Produkt 5')">Jetzt kaufen</button>
     </div>
-
     <div class="produkt" data-name="Produkt 6">
       <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6">
       <div class="name">Produkt 6</div>
@@ -124,67 +134,60 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
 </div>
 
 <script>
-let cart = 0;
+let cart=0;
 
-function showShop() {
-  document.getElementById('loginSection').style.display='none';
-  document.getElementById('shopSection').style.display='block';
-}
+// Bildschirm wechseln
+function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='block'; }
+function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='block'; }
+function backToStart(){ document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('startScreen').style.display='block'; }
+function skipLogin(){ localStorage.removeItem('user'); document.getElementById('startScreen').style.display='none'; document.getElementById('shopSection').style.display='block'; }
 
 // Registrierung
 function register(){
-  const name=document.getElementById('regName').value;
-  const email=document.getElementById('regEmail').value;
+  const first=document.getElementById('regFirst').value;
+  const last=document.getElementById('regLast').value;
   const address=document.getElementById('regAddress').value;
-  const password=document.getElementById('regPassword').value;
-  if(!name || !email || !address || !password){ alert("Bitte alle Felder ausfüllen!"); return; }
-  localStorage.setItem('user',JSON.stringify({name,email,address,password}));
+  const email=document.getElementById('regEmail').value;
+  const pass=document.getElementById('regPassword').value;
+  const pass2=document.getElementById('regPassword2').value;
+  if(!first||!last||!address||!email||!pass||!pass2){ alert("Bitte alle Felder ausfüllen!"); return; }
+  if(pass!==pass2){ alert("Passwörter stimmen nicht überein!"); return; }
+  localStorage.setItem('user',JSON.stringify({first,last,address,email,password:pass}));
   alert("Registrierung erfolgreich!");
-  showShop();
+  document.getElementById('registerScreen').style.display='none';
+  document.getElementById('shopSection').style.display='block';
 }
 
 // Login
 function login(){
   const email=document.getElementById('loginEmail').value;
-  const password=document.getElementById('loginPassword').value;
+  const pass=document.getElementById('loginPassword').value;
   const user=JSON.parse(localStorage.getItem('user'));
-  if(user && user.email===email && user.password===password){
+  if(user&&user.email===email&&user.password===pass){
     alert("Login erfolgreich!");
-    showShop();
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('shopSection').style.display='block';
   } else { alert("Falsche E-Mail oder Passwort!"); }
 }
 
-// Ohne Anmeldung
-function skipLogin(){
-  localStorage.removeItem('user');
-  showShop();
-}
-
-// Produkt kaufen
-function buyProduct(productName){
-  const user = JSON.parse(localStorage.getItem('user'));
-  if(!user){
-    alert("Bitte melde dich zuerst an!");
-    return;
-  }
+// Kaufen
+function buyProduct(name){
+  const user=JSON.parse(localStorage.getItem('user'));
+  if(!user){ alert("Bitte melde dich zuerst an!"); return; }
   cart++;
-  const badge = document.getElementById('cartCountBadge');
+  const badge=document.getElementById('cartCountBadge');
   badge.style.display='inline-block';
   badge.innerText=cart;
-
-  const subject="Bestellung "+productName;
-  const body="Ich möchte "+productName+" kaufen 😁\nAdresse: "+user.address;
+  const subject="Bestellung "+name;
+  const body="Ich möchte "+name+" kaufen 😁\nAdresse: "+user.address;
   window.location.href="mailto:online.shop551552@gmail.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
 }
 
-// Suchfunktion
+// Suche
 function searchProducts(){
   const input=document.getElementById('searchInput').value.toLowerCase();
   const products=document.getElementById('produkteContainer').children;
-  for(let product of products){
-    const name=product.getAttribute('data-name').toLowerCase();
-    product.style.display=name.includes(input)?'block':'none';
-  }
+  for(let p of products){ const name=p.getAttribute('data-name').toLowerCase(); p.style.display=name.includes(input)?'block':'none'; }
 }
 </script>
 
