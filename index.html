@@ -7,9 +7,14 @@
 <style>
   body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; max-width: 900px; margin: auto; }
   h1 { text-align: center; margin-bottom: 20px; }
+
+  /* Suchleiste + Warenkorb */
   .search-cart { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   input[type="text"] { width: 70%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
-  .cart { font-weight: bold; font-size: 1.1em; }
+  .cart { position: relative; font-size: 1.5em; cursor: pointer; }
+  #cartCountBadge { position: absolute; bottom: -5px; right: -10px; background-color: orange; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.8em; font-weight: bold; display: none; }
+
+  /* Produktliste */
   .produkte { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
   .produkt { border: 1px solid #ccc; border-radius: 8px; width: 42%; box-sizing: border-box; padding: 10px; text-align: center; cursor: pointer; transition: box-shadow 0.3s; background: white; }
   .produkt:hover { box-shadow: 0 0 10px #888; }
@@ -18,7 +23,10 @@
   .preis { color: green; font-size: 1.2em; margin-bottom: 10px; }
   button.kaufen { background-color: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 1em; }
   button.kaufen:hover { background-color: #218838; }
+
+  /* Footer */
   footer { text-align: center; margin-top: 40px; padding: 20px 0; border-top: 1px solid #ccc; font-size: 0.9em; color: #555; }
+
   @media (max-width: 500px) { .produkt { width: 100%; } input[type="text"] { width: 60%; } }
 </style>
 </head>
@@ -28,7 +36,10 @@
 
 <div class="search-cart">
   <input type="text" id="searchInput" placeholder="Produkt suchen..." onkeyup="searchProducts()">
-  <div class="cart">🛒 <span id="cartCount">0</span></div>
+  <div class="cart" id="cartIcon">
+    🛒
+    <span id="cartCountBadge"></span>
+  </div>
 </div>
 
 <div class="produkte" id="produkteContainer">
@@ -97,19 +108,23 @@
 
 <script>
 let cart = 0;
+
 function buyProduct(productName) {
   cart++;
-  document.getElementById('cartCount').innerText = cart;
+  const badge = document.getElementById('cartCountBadge');
+  if (cart > 0) {
+    badge.style.display = 'inline-block';
+    badge.innerText = cart;
+  }
   window.location.href = "mailto:online.shop551552@gmail.com?subject=Bestellung " + encodeURIComponent(productName);
 }
 
-// Suchfunktion
 function searchProducts() {
   const input = document.getElementById('searchInput').value.toLowerCase();
-  const produkte = document.getElementById('produkteContainer').children;
-  for (let produkt of produkte) {
-    const name = produkt.getAttribute('data-name').toLowerCase();
-    produkt.style.display = name.includes(input) ? 'block' : 'none';
+  const products = document.getElementById('produkteContainer').children;
+  for (let product of products) {
+    const name = product.getAttribute('data-name').toLowerCase();
+    product.style.display = name.includes(input) ? 'block' : 'none';
   }
 }
 </script>
