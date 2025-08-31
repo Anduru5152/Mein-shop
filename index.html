@@ -12,7 +12,21 @@
   .search-cart { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   input[type="text"] { width: 70%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
   .cart { position: relative; font-size: 1.5em; cursor: pointer; }
-  #cartCountBadge { position: absolute; bottom: -5px; right: -10px; background-color: orange; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.8em; font-weight: bold; display: none; }
+  #cartCountBadge {
+    position: absolute;
+    bottom: -5px;
+    right: -10px;
+    background-color: #ff6600; /* dunkleres Orange */
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-align: center;
+    line-height: 18px;
+    display: none;
+  }
 
   /* Produktliste */
   .produkte { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
@@ -112,11 +126,13 @@ let cart = 0;
 function buyProduct(productName) {
   cart++;
   const badge = document.getElementById('cartCountBadge');
-  if (cart > 0) {
-    badge.style.display = 'inline-block';
-    badge.innerText = cart;
-  }
-  window.location.href = "mailto:online.shop551552@gmail.com?subject=Bestellung " + encodeURIComponent(productName);
+  badge.style.display = 'inline-block';
+  badge.innerText = cart;
+
+  // E-Mail öffnen mit angepasstem Text
+  const subject = "Bestellung " + productName;
+  const body = "Ich möchte " + productName + " kaufen 😁";
+  window.location.href = "mailto:online.shop551552@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
 }
 
 function searchProducts() {
@@ -130,4 +146,4 @@ function searchProducts() {
 </script>
 
 </body>
-</html>
+</html> 
