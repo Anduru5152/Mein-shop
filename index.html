@@ -15,7 +15,7 @@ input::placeholder { color:#aaa; }
 .center-box { max-width:400px; margin:50px auto; padding:20px; background:white; border:1px solid #ccc; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
 
 .green-btn { background:#28a745; color:white; width:100%; margin-bottom:10px; }
-.blue-btn { background:#0066cc; color:white; width:100%; }
+#startScreen p span { color:#0066cc; cursor:pointer; }
 
 #loginScreen, #registerScreen, #shopSection { display:none; }
 
@@ -48,7 +48,9 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
   <button class="green-btn" onclick="showRegister()">Registrieren</button>
   <p>Du hast bereits ein Konto?</p>
   <button class="green-btn" onclick="showLogin()">Anmelden</button>
-  <div class="blue-btn" style="margin-top:15px;" onclick="skipLogin()">Ohne Anmeldung fortfahren</div>
+  <p style="text-align:center; margin-top:15px;">
+    <span onclick="skipLogin()">Ohne Anmeldung fortfahren</span>
+  </p>
 </div>
 
 <!-- REGISTRIERUNG -->
@@ -62,7 +64,9 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
   <input type="password" id="regPassword" placeholder="Passwort">
   <input type="password" id="regPassword2" placeholder="Passwort wiederholen">
   <button class="green-btn" onclick="register()">Registrieren</button>
-  <div class="blue-btn" onclick="backToStart()">Zurück</div>
+  <div style="text-align:center; margin-top:10px;">
+    <span style="color:#0066cc; cursor:pointer;" onclick="backToStart()">Zurück</span>
+  </div>
 </div>
 
 <!-- LOGIN -->
@@ -72,7 +76,9 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
   <input type="email" id="loginEmail" placeholder="E-Mail-Adresse">
   <input type="password" id="loginPassword" placeholder="Passwort">
   <button class="green-btn" onclick="login()">Anmelden</button>
-  <div class="blue-btn" onclick="backToStart()">Zurück</div>
+  <div style="text-align:center; margin-top:10px;">
+    <span style="color:#0066cc; cursor:pointer;" onclick="backToStart()">Zurück</span>
+  </div>
 </div>
 
 <!-- SHOP -->
@@ -134,13 +140,11 @@ footer { text-align:center; margin-top:40px; padding:20px 0; border-top:1px soli
 </div>
 
 <script>
-let cart=0;
-
-// Bildschirm wechseln
+// Startscreen
 function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='block'; }
 function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='block'; }
 function backToStart(){ document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('startScreen').style.display='block'; }
-function skipLogin(){ localStorage.removeItem('user'); document.getElementById('startScreen').style.display='none'; document.getElementById('shopSection').style.display='block'; }
+function skipLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('shopSection').style.display='block'; }
 
 // Registrierung
 function register(){
@@ -150,9 +154,16 @@ function register(){
   const email=document.getElementById('regEmail').value;
   const pass=document.getElementById('regPassword').value;
   const pass2=document.getElementById('regPassword2').value;
+
   if(!first||!last||!address||!email||!pass||!pass2){ alert("Bitte alle Felder ausfüllen!"); return; }
   if(pass!==pass2){ alert("Passwörter stimmen nicht überein!"); return; }
-  localStorage.setItem('user',JSON.stringify({first,last,address,email,password:pass}));
+
+  const users=JSON.parse(localStorage.getItem('users')||"[]");
+  if(users.some(u=>u.email===email)){ alert("Diese E-Mail wird bereits verwendet!"); return; }
+  if(users.some(u=>u.address===address)){ alert("Diese Adresse ist bereits registriert!"); return; }
+
+  users.push({first,last,address,email,password:pass});
+  localStorage.setItem('users',JSON.stringify(users));
   alert("Registrierung erfolgreich!");
   document.getElementById('registerScreen').style.display='none';
   document.getElementById('shopSection').style.display='block';
@@ -162,32 +173,34 @@ function register(){
 function login(){
   const email=document.getElementById('loginEmail').value;
   const pass=document.getElementById('loginPassword').value;
-  const user=JSON.parse(localStorage.getItem('user'));
-  if(user&&user.email===email&&user.password===pass){
-    alert("Login erfolgreich!");
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('shopSection').style.display='block';
-  } else { alert("Falsche E-Mail oder Passwort!"); }
+  const users=JSON.parse(localStorage.getItem('users')||"[]");
+  const user=users.find(u=>u.email===email && u.password===pass);
+  if(!user){ alert("Falsche Daten!"); return; }
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('shopSection').style.display='block';
 }
 
-// Kaufen
+// Einkaufswagen
+let cartCount=0;
 function buyProduct(name){
-  const user=JSON.parse(localStorage.getItem('user'));
-  if(!user){ alert("Bitte melde dich zuerst an!"); return; }
-  cart++;
+  const users=JSON.parse(localStorage.getItem('users')||"[]");
+  if(users.length===0){ alert("Bitte melden Sie sich an, um zu kaufen."); showLogin(); return; }
+
+  cartCount++;
   const badge=document.getElementById('cartCountBadge');
+  badge.innerText=cartCount;
   badge.style.display='inline-block';
-  badge.innerText=cart;
-  const subject="Bestellung "+name;
-  const body="Ich möchte "+name+" kaufen 😁\nAdresse: "+user.address;
-  window.location.href="mailto:online.shop551552@gmail.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+  window.location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo, ich möchte ${encodeURIComponent(name)} kaufen 😁`;
 }
 
 // Suche
 function searchProducts(){
   const input=document.getElementById('searchInput').value.toLowerCase();
   const products=document.getElementById('produkteContainer').children;
-  for(let p of products){ const name=p.getAttribute('data-name').toLowerCase(); p.style.display=name.includes(input)?'block':'none'; }
+  for(let prod of products){
+    const name=prod.getAttribute('data-name').toLowerCase();
+    prod.style.display=name.includes(input)?'block':'none';
+  }
 }
 </script>
 
