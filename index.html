@@ -1,57 +1,131 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mein Shop</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
-    h1 { text-align: center; }
-    .produkte { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-    .produkt {
-      border: 1px solid #ccc; border-radius: 8px; width: 42%;
-      box-sizing: border-box; padding: 10px; text-align: center;
-      cursor: pointer; transition: box-shadow 0.3s;
-    }
-    .produkt:hover { box-shadow: 0 0 10px #888; }
-    .produkt img { max-width: 100%; border-radius: 5px; }
-    .name { font-weight: bold; margin: 10px 0 5px; }
-    .preis { color: green; font-size: 1.2em; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Shop</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+    background: #f9f9f9;
+  }
+  h1 { text-align: center; }
+  .produkte {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .produkt {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 42%;
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+    background: white;
+  }
+  .produkt:hover { box-shadow: 0 0 10px #888; }
+  .produkt img { max-width: 100%; border-radius: 5px; }
+  .name { font-weight: bold; margin: 10px 0 5px; }
+  .preis { color: green; font-size: 1.2em; margin-bottom: 10px; }
+  button.kaufen {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  button.kaufen:hover { background-color: #218838; }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid #ccc;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  @media (max-width: 500px) {
+    .produkt { width: 100%; }
+  }
+</style>
 </head>
 <body>
-  <h1>Mein Shop</h1>
-  <div class="produkte">
-    <a href="produkt1.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1" />
+
+<h1>Mein Shop</h1>
+
+<div class="produkte">
+
+  <div class="produkt">
+    <a href="produkt1.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1 - Vorderansicht">
       <div class="name">Produkt 1</div>
-      <div class="preis">29,99 €</div>
     </a>
-    <a href="produkt2.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2" />
-      <div class="name">Produkt 2</div>
-      <div class="preis">19,99 €</div>
-    </a>
-    <a href="produkt3.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3" />
-      <div class="name">Produkt 3</div>
-      <div class="preis">39,99 €</div>
-    </a>
-    <a href="produkt4.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4" />
-      <div class="name">Produkt 4</div>
-      <div class="preis">24,99 €</div>
-    </a>
-    <a href="produkt5.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5" />
-      <div class="name">Produkt 5</div>
-      <div class="preis">14,99 €</div>
-    </a>
-    <a href="produkt6.html" class="produkt">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6" />
-      <div class="name">Produkt 6</div>
-      <div class="preis">49,99 €</div>
-    </a>
+    <div class="preis">29,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK1'">Jetzt kaufen</button>
   </div>
+
+  <div class="produkt">
+    <a href="produkt2.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2 - Vorderansicht">
+      <div class="name">Produkt 2</div>
+    </a>
+    <div class="preis">19,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK2'">Jetzt kaufen</button>
+  </div>
+
+  <div class="produkt">
+    <a href="produkt3.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3 - Vorderansicht">
+      <div class="name">Produkt 3</div>
+    </a>
+    <div class="preis">39,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK3'">Jetzt kaufen</button>
+  </div>
+
+  <div class="produkt">
+    <a href="produkt4.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4 - Vorderansicht">
+      <div class="name">Produkt 4</div>
+    </a>
+    <div class="preis">24,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK4'">Jetzt kaufen</button>
+  </div>
+
+  <div class="produkt">
+    <a href="produkt5.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5 - Vorderansicht">
+      <div class="name">Produkt 5</div>
+    </a>
+    <div class="preis">14,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK5'">Jetzt kaufen</button>
+  </div>
+
+  <div class="produkt">
+    <a href="produkt6.html">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6 - Vorderansicht">
+      <div class="name">Produkt 6</div>
+    </a>
+    <div class="preis">49,99 €</div>
+    <button class="kaufen" onclick="window.location.href='https://www.paypal.com/paypalme/DEINLINK6'">Jetzt kaufen</button>
+  </div>
+
+</div>
+
+<footer>
+  &copy; 2025 Mein Shop | Alle Rechte vorbehalten | 
+  <a href="datenschutz.html">Datenschutz</a> | 
+  <a href="impressum.html">Impressum</a>
+</footer>
+
 </body>
 </html>
