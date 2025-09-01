@@ -5,233 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mein Shop</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .container { max-width: 900px; margin: auto; padding: 20px; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f8f8; }
+    header { text-align: center; padding: 20px; background: #333; color: #fff; }
+    h1 { margin: 0; }
 
-    h1 { text-align: center; margin-top: 20px; }
+    /* Login-Overlay */
+    #loginOverlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    .loginBox {
+      background: #fff; padding: 20px; border-radius: 8px; text-align: center; width: 320px;
+    }
+    .loginBox h2 { margin-top: 0; }
+    .loginBox button {
+      display: block; width: 100%; padding: 10px; margin: 10px 0;
+      border: none; border-radius: 5px; font-size: 1em; cursor: pointer;
+    }
+    .greenBtn { background: #4CAF50; color: white; }
+    .blueBtn { background: none; color: #007BFF; text-decoration: underline; }
 
-    /* Login / Registrierung */
-    .auth-section {
-      display: none;
-      padding: 20px;
-      border-bottom: 1px solid #ccc;
-      background: #f9f9f9;
-    }
-    .auth-box {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 10px 0;
-      background: #fff;
-    }
-    .auth-box h2 { margin-top: 0; }
-    .auth-box input {
-      width: 100%; padding: 8px; margin: 5px 0 10px; box-sizing: border-box;
-    }
-    .auth-box button {
-      padding: 8px 15px; background: green; color: white; border: none; cursor: pointer;
-    }
-    .blue-link {
-      display: block;
-      text-align: center;
-      margin-top: 10px;
-      color: blue;
-      cursor: pointer;
-    }
-
-    /* Produkte */
-    .produkte {
-      display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
-      margin-top: 20px;
-    }
+    /* Shop Layout */
+    .produkte { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px; }
     .produkt {
       border: 1px solid #ccc; border-radius: 8px; width: 42%;
-      box-sizing: border-box; padding: 10px; text-align: center;
+      background: white; padding: 10px; text-align: center;
       cursor: pointer; transition: box-shadow 0.3s;
-      text-decoration: none; color: inherit;
     }
     .produkt:hover { box-shadow: 0 0 10px #888; }
     .produkt img { max-width: 100%; border-radius: 5px; }
     .name { font-weight: bold; margin: 10px 0 5px; }
     .preis { color: green; font-size: 1.2em; }
 
-    /* Warenkorb */
-    .cart {
-      position: fixed; top: 20px; right: 20px;
-      font-size: 24px; cursor: pointer;
+    /* Einkaufswagen */
+    #cart {
+      position: fixed; top: 20px; right: 20px; font-size: 24px; cursor: pointer;
     }
-    .cart-badge {
-      position: absolute;
-      bottom: -5px; right: -5px;
-      background: darkorange;
-      color: white;
-      border-radius: 50%;
-      padding: 4px 8px;
-      font-size: 14px;
-      display: none;
+    #cartCount {
+      position: absolute; bottom: -5px; right: -5px;
+      background: #e67e22; color: white; font-size: 14px; font-weight: bold;
+      border-radius: 50%; padding: 4px 7px; display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <header>
     <h1>Mein Shop</h1>
+  </header>
 
-    <!-- Login/Registrieren -->
-    <div id="authSection" class="auth-section">
-      <div id="welcomeScreen">
-        <h2>Willkommen!</h2>
-        <div class="auth-box">
-          <p>Bist du zum ersten Mal hier?</p>
-          <button onclick="showRegister()">Registrieren</button>
-        </div>
-        <div class="auth-box">
-          <p>Du hast bereits ein Konto?</p>
-          <button onclick="showLogin()">Anmelden</button>
-        </div>
-        <span class="blue-link" onclick="continueWithoutLogin()">Ohne Anmeldung fortfahren</span>
-      </div>
+  <!-- Einkaufswagen -->
+  <div id="cart">🛒<span id="cartCount">0</span></div>
 
-      <!-- Registrieren -->
-      <div id="registerScreen" style="display:none;">
-        <h2>Registrieren</h2>
-        <div class="auth-box">
-          <p>Bitte füllen Sie alle Felder aus!</p>
-          <input type="text" id="vorname" placeholder="Vorname" />
-          <input type="text" id="nachname" placeholder="Nachname" />
-          <input type="text" id="adresse" placeholder="Straße, Hausnummer, Postleitzahl" />
-          <input type="email" id="regEmail" placeholder="E-Mail-Adresse" />
-          <input type="password" id="regPass1" placeholder="Passwort" />
-          <input type="password" id="regPass2" placeholder="Passwort wiederholen" />
-          <button onclick="register()">Registrieren</button>
-          <span class="blue-link" onclick="showWelcome()">Zurück</span>
-        </div>
-      </div>
-
-      <!-- Login -->
-      <div id="loginScreen" style="display:none;">
-        <h2>Anmelden</h2>
-        <div class="auth-box">
-          <p>Bitte geben Sie Ihre Daten ein!</p>
-          <input type="email" id="loginEmail" placeholder="E-Mail-Adresse" />
-          <input type="password" id="loginPass" placeholder="Passwort" />
-          <button onclick="login()">Anmelden</button>
-          <span class="blue-link" onclick="showWelcome()">Zurück</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Produkte -->
-    <div class="produkte">
-      <a href="produkt1.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1" />
-        <div class="name">Produkt 1</div>
-        <div class="preis">29,99 €</div>
-      </a>
-      <a href="produkt2.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2" />
-        <div class="name">Produkt 2</div>
-        <div class="preis">19,99 €</div>
-      </a>
-      <a href="produkt3.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3" />
-        <div class="name">Produkt 3</div>
-        <div class="preis">39,99 €</div>
-      </a>
-      <a href="produkt4.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4" />
-        <div class="name">Produkt 4</div>
-        <div class="preis">24,99 €</div>
-      </a>
-      <a href="produkt5.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5" />
-        <div class="name">Produkt 5</div>
-        <div class="preis">14,99 €</div>
-      </a>
-      <a href="produkt6.html" class="produkt">
-        <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6" />
-        <div class="name">Produkt 6</div>
-        <div class="preis">49,99 €</div>
-      </a>
+  <!-- Login Overlay -->
+  <div id="loginOverlay">
+    <div class="loginBox">
+      <h2>Willkommen!</h2>
+      <p>Bist du zum ersten Mal hier?</p>
+      <button class="greenBtn" onclick="showRegister()">Registrieren</button>
+      <p>Du hast bereits ein Konto?</p>
+      <button class="greenBtn" onclick="showLogin()">Anmelden</button>
+      <button class="blueBtn" onclick="continueWithoutLogin()">Ohne Anmeldung fortfahren</button>
     </div>
   </div>
 
-  <!-- Warenkorb -->
-  <div class="cart" onclick="alert('Warenkorb öffnen...')">
-    🛒
-    <span class="cart-badge" id="cartBadge">0</span>
+  <!-- Produkte -->
+  <div class="produkte">
+    <a href="produkt1.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1" />
+      <div class="name">Produkt 1</div>
+      <div class="preis">29,99 €</div>
+    </a>
+    <a href="produkt2.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2" />
+      <div class="name">Produkt 2</div>
+      <div class="preis">19,99 €</div>
+    </a>
+    <a href="produkt3.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3" />
+      <div class="name">Produkt 3</div>
+      <div class="preis">39,99 €</div>
+    </a>
+    <a href="produkt4.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4" />
+      <div class="name">Produkt 4</div>
+      <div class="preis">24,99 €</div>
+    </a>
+    <a href="produkt5.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5" />
+      <div class="name">Produkt 5</div>
+      <div class="preis">14,99 €</div>
+    </a>
+    <a href="produkt6.html" class="produkt">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6" />
+      <div class="name">Produkt 6</div>
+      <div class="preis">49,99 €</div>
+    </a>
   </div>
 
-  <script>
-    let loggedIn = false;
-    let users = [];
-    let cartCount = 0;
+<script>
+  let loggedIn = false;
+  let cartCount = 0;
 
-    function showWelcome() {
-      document.getElementById("welcomeScreen").style.display = "block";
-      document.getElementById("registerScreen").style.display = "none";
-      document.getElementById("loginScreen").style.display = "none";
-    }
-    function showRegister() {
-      document.getElementById("welcomeScreen").style.display = "none";
-      document.getElementById("registerScreen").style.display = "block";
-    }
-    function showLogin() {
-      document.getElementById("welcomeScreen").style.display = "none";
-      document.getElementById("loginScreen").style.display = "block";
-    }
-    function continueWithoutLogin() {
-      document.getElementById("authSection").style.display = "none";
-    }
+  function showLogin() {
+    alert("Hier könnte ein Anmeldeformular erscheinen.");
+  }
+  function showRegister() {
+    alert("Hier könnte ein Registrierungsformular erscheinen.");
+  }
+  function continueWithoutLogin() {
+    loggedIn = true;
+    document.getElementById("loginOverlay").style.display = "none";
+  }
 
-    function register() {
-      const email = document.getElementById("regEmail").value;
-      const pass1 = document.getElementById("regPass1").value;
-      const pass2 = document.getElementById("regPass2").value;
-
-      if (users.find(u => u.email === email)) {
-        alert("E-Mail wird schon benutzt!");
-        return;
-      }
-      if (pass1 !== pass2) {
-        alert("Passwörter stimmen nicht überein!");
-        return;
-      }
-      users.push({ email, pass: pass1 });
-      alert("Registrierung erfolgreich!");
-      showWelcome();
+  function addToCart(productName) {
+    if (!loggedIn) {
+      alert("Bitte anmelden oder registrieren, bevor du kaufen kannst.");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
+    cartCount++;
+    document.getElementById("cartCount").innerText = cartCount;
+    document.getElementById("cartCount").style.display = "inline-block";
+    window.location.href = `mailto:online.shop551552@gmail.com?subject=Bestellung&body=Ich%20möchte%20${encodeURIComponent(productName)}%20kaufen.`;
+  }
+</script>
 
-    function login() {
-      const email = document.getElementById("loginEmail").value;
-      const pass = document.getElementById("loginPass").value;
-
-      const user = users.find(u => u.email === email && u.pass === pass);
-      if (!user) {
-        alert("Falsche Daten!");
-        return;
-      }
-      loggedIn = true;
-      document.getElementById("authSection").style.display = "none";
-      alert("Anmeldung erfolgreich!");
-    }
-
-    function requireLogin() {
-      if (!loggedIn) {
-        document.getElementById("authSection").style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" }); // autoscroll nach oben
-        return false;
-      }
-      return true;
-    }
-
-    function addToCart(productName) {
-      if (!requireLogin()) return;
-      cartCount++;
-      const badge = document.getElementById("cartBadge");
-      badge.innerText = cartCount;
-      badge.style.display = "inline-block";
-      window.location.href = `mailto:online.shop551552@gmail.com?subject=Bestellung&body=Ich möchte ${productName} kaufen 😁`;
-    }
-  </script>
 </body>
 </html>
