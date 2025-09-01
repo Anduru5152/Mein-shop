@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -22,6 +22,8 @@
   .produkt img { width:100%; border-radius:5px; }
   .name { font-weight:bold; margin:10px 0 5px; }
   .preis { color:green; font-size:1.2em; margin-bottom:10px; }
+  .produkt button { margin-top:5px; padding:8px 15px; border:none; background:#28a745; color:white; border-radius:5px; cursor:pointer; }
+  .produkt button:hover { background:#218838; }
   /* Warenkorb */
   #cart { position:fixed; bottom:20px; right:20px; width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; }
   #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
@@ -87,6 +89,24 @@
       <div class="preis">39,99 €</div>
       <button onclick="buyProduct('Produkt 3'); event.stopPropagation()">Jetzt kaufen</button>
     </div>
+    <div class="produkt" data-name="Produkt 4" onclick="viewProduct('Produkt 4')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4">
+      <div class="name">Produkt 4</div>
+      <div class="preis">59,99 €</div>
+      <button onclick="buyProduct('Produkt 4'); event.stopPropagation()">Jetzt kaufen</button>
+    </div>
+    <div class="produkt" data-name="Produkt 5" onclick="viewProduct('Produkt 5')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5">
+      <div class="name">Produkt 5</div>
+      <div class="preis">39,99 €</div>
+      <button onclick="buyProduct('Produkt 5'); event.stopPropagation()">Jetzt kaufen</button>
+    </div>
+    <div class="produkt" data-name="Produkt 6" onclick="viewProduct('Produkt 6')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6">
+      <div class="name">Produkt 6</div>
+      <div class="preis">49,99 €</div>
+      <button onclick="buyProduct('Produkt 6'); event.stopPropagation()">Jetzt kaufen</button>
+    </div>
   </div>
 </div>
 
@@ -98,8 +118,8 @@ let users = [];
 let currentUser = null;
 let cartCount = 0;
 
-function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }
-function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; }
+function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; window.scrollTo(0,0); }
+function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; window.scrollTo(0,0); }
 function enterShop(){ document.getElementById('startScreen').style.display='none'; document.getElementById('shop').style.display='block'; }
 
 function registerUser(){
@@ -132,14 +152,13 @@ function buyProduct(name){
 // Einfaches Produkt-View (Popup)
 function viewProduct(name){ alert('Hier sollte die Produktbeschreibung und Bilder für '+name+' angezeigt werden.'); }
 
-// Warenkorb verschiebbar
+// Warenkorb verschiebbar nur am Rand
 const cart = document.getElementById('cart');
 let offsetX, offsetY, isDragging=false;
 cart.addEventListener('mousedown', e=>{ isDragging=true; offsetX=e.offsetX; offsetY=e.offsetY; });
 document.addEventListener('mousemove', e=>{
   if(isDragging){
-    let x=e.clientX-offsetX;
-    let y=e.clientY-offsetY;
+    let x=e.clientX-offsetX; let y=e.clientY-offsetY;
     const maxX=window.innerWidth-cart.offsetWidth; const maxY=window.innerHeight-cart.offsetHeight;
     if(x<0)x=0; if(y<0)y=0; if(x>maxX)x=maxX; if(y>maxY)y=maxY;
     cart.style.left=x+'px'; cart.style.top=y+'px';
