@@ -1,204 +1,151 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Shop</title>
 <style>
-  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
-  .screen { display:none; padding:40px; text-align:center; }
-  .visible { display:block; }
-  h1 { margin-bottom:20px; }
-  .btn { padding:15px 25px; margin:10px; border:none; border-radius:8px; cursor:pointer; font-size:1em; color:white; }
-  .btn.green { background:#28a745; }
-  .btn.blue { background:#007bff; }
-  .form-box { display:inline-block; background:white; border:1px solid #ccc; padding:20px; border-radius:10px; text-align:left; min-width:300px; }
-  .form-box input { width:100%; padding:8px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
-  .form-box label { display:block; margin-top:10px; color:#555; }
-  
+  body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
+  /* Startbildschirm */
+  #startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; }
+  .btn { padding:12px 25px; margin:10px; color:white; background:#28a745; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+  .btn:hover { background:#218838; }
+  .linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; margin-top:15px; display:inline-block; }
+  input { width:250px; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
+  .box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
   /* Shop */
-  #shopScreen { padding:20px; }
-  .search-bar { margin-bottom:20px; text-align:center; }
-  .search-bar input { width:70%; padding:10px; border-radius:5px; border:1px solid #ccc; }
+  #shop { display:none; padding:20px; max-width:900px; margin:auto; }
+  h1 { text-align:center; margin-bottom:20px; }
   .produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-  .produkt { background:white; border-radius:10px; width:300px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
-  .produkt img { width:100%; border-radius:8px; }
-  .name { font-weight:bold; margin:10px 0; }
+  .produkt { border:1px solid #ccc; border-radius:8px; width:42%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
+  .produkt:hover { box-shadow:0 0 10px #888; }
+  .produkt img { width:100%; border-radius:5px; }
+  .name { font-weight:bold; margin:10px 0 5px; }
   .preis { color:green; font-size:1.2em; margin-bottom:10px; }
-  .btn.buy { background:#28a745; width:100%; }
-
   /* Warenkorb */
-  #cart { position:fixed; bottom:20px; right:20px; width:60px; height:60px; background:white; border:2px solid orange; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:1000; }
-  #cart span { position:absolute; top:-10px; right:-10px; background:orange; color:white; font-weight:bold; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.9em; }
-
+  #cart { position:fixed; bottom:20px; right:20px; width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; }
+  #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
 </style>
 </head>
 <body>
 
 <!-- Startbildschirm -->
-<div id="startScreen" class="screen visible">
+<div id="startScreen">
   <h1>Willkommen!</h1>
-  <p>Bist du zum ersten Mal hier?</p>
-  <button class="btn green" onclick="showRegister()">Registrieren</button>
-  <p>Du hast bereits ein Konto?</p>
-  <button class="btn green" onclick="showLogin()">Anmelden</button>
-  <p><button class="btn blue" onclick="enterShop()">Ohne Anmeldung fortfahren</button></p>
+  <div>Bist du zum ersten Mal hier?</div>
+  <button class="btn" onclick="showRegister()">Registrieren</button>
+  <div>Du hast bereits ein Konto?</div>
+  <button class="btn" onclick="showLogin()">Anmelden</button>
+  <div class="linkBlue" onclick="enterShop()">Ohne Anmeldung fortfahren</div>
 </div>
 
 <!-- Registrieren -->
-<div id="registerScreen" class="screen">
-  <h1>Registrieren</h1>
-  <div class="form-box">
-    <label>Vorname:</label><input type="text" id="regVorname">
-    <label>Nachname:</label><input type="text" id="regNachname">
-    <label>Straße, Hausnummer, Postleitzahl:</label><input type="text" id="regAdresse">
-    <label>Email-Adresse:</label><input type="email" id="regEmail">
-    <label>Passwort:</label><input type="password" id="regPass">
-    <label>Passwort wiederholen:</label><input type="password" id="regPass2">
-    <button class="btn green" onclick="registerUser()">Registrieren</button>
-    <p><button class="btn blue" onclick="showStart()">Zurück</button></p>
+<div id="registerScreen" style="display:none;">
+  <h2>Registrieren</h2>
+  <div class="box">
+    <input type="text" id="regVorname" placeholder="Vorname"><br>
+    <input type="text" id="regNachname" placeholder="Nachname"><br>
+    <input type="text" id="regAdresse" placeholder="Straße, Hausnummer, PLZ"><br>
+    <input type="email" id="regEmail" placeholder="Email-Adresse"><br>
+    <input type="password" id="regPass" placeholder="Passwort"><br>
+    <input type="password" id="regPass2" placeholder="Passwort wiederholen"><br>
+    <button class="btn" onclick="registerUser()">Registrieren</button>
+    <div class="linkBlue" onclick="showLogin()">Bereits ein Konto? Anmelden</div>
   </div>
 </div>
 
-<!-- Login -->
-<div id="loginScreen" class="screen">
-  <h1>Anmelden</h1>
-  <div class="form-box">
-    <label>Email-Adresse:</label><input type="email" id="loginEmail">
-    <label>Passwort:</label><input type="password" id="loginPass">
-    <button class="btn green" onclick="loginUser()">Anmelden</button>
-    <p><button class="btn blue" onclick="showStart()">Zurück</button></p>
+<!-- Anmelden -->
+<div id="loginScreen" style="display:none;">
+  <h2>Anmelden</h2>
+  <div class="box">
+    <input type="email" id="loginEmail" placeholder="Email-Adresse"><br>
+    <input type="password" id="loginPass" placeholder="Passwort"><br>
+    <button class="btn" onclick="loginUser()">Anmelden</button>
+    <div class="linkBlue" onclick="showRegister()">Noch kein Konto? Registrieren</div>
   </div>
 </div>
 
 <!-- Shop -->
-<div id="shopScreen" class="screen">
+<div id="shop">
   <h1>Mein Shop</h1>
-  <div class="search-bar"><input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Produkt suchen..."></div>
-  <div class="produkte" id="productsContainer">
-    <!-- Produkte -->
-    <div class="produkt" data-name="Produkt 1">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+1">
+  <div class="produkte" id="produkteContainer">
+    <div class="produkt" data-name="Produkt 1" onclick="viewProduct('Produkt 1')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
       <div class="name">Produkt 1</div>
       <div class="preis">29,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 1')">Jetzt kaufen</button>
+      <button onclick="buyProduct('Produkt 1'); event.stopPropagation()">Jetzt kaufen</button>
     </div>
-    <div class="produkt" data-name="Produkt 2">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+2">
+    <div class="produkt" data-name="Produkt 2" onclick="viewProduct('Produkt 2')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
       <div class="name">Produkt 2</div>
       <div class="preis">19,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 2')">Jetzt kaufen</button>
+      <button onclick="buyProduct('Produkt 2'); event.stopPropagation()">Jetzt kaufen</button>
     </div>
-    <div class="produkt" data-name="Produkt 3">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+3">
+    <div class="produkt" data-name="Produkt 3" onclick="viewProduct('Produkt 3')">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
       <div class="name">Produkt 3</div>
       <div class="preis">39,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 3')">Jetzt kaufen</button>
-    </div>
-    <div class="produkt" data-name="Produkt 4">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+4">
-      <div class="name">Produkt 4</div>
-      <div class="preis">24,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 4')">Jetzt kaufen</button>
-    </div>
-    <div class="produkt" data-name="Produkt 5">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+5">
-      <div class="name">Produkt 5</div>
-      <div class="preis">14,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 5')">Jetzt kaufen</button>
-    </div>
-    <div class="produkt" data-name="Produkt 6">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+6">
-      <div class="name">Produkt 6</div>
-      <div class="preis">49,99 €</div>
-      <button class="btn buy" onclick="buyProduct('Produkt 6')">Jetzt kaufen</button>
+      <button onclick="buyProduct('Produkt 3'); event.stopPropagation()">Jetzt kaufen</button>
     </div>
   </div>
 </div>
 
 <!-- Warenkorb -->
-<div id="cart">
-  🛒
-  <span id="cartCount" style="display:none;">0</span>
-</div>
+<div id="cart"><img src="https://img.icons8.com/ios-glyphs/30/000000/shopping-cart.png"/><span id="cartCount">0</span></div>
 
 <script>
 let users = [];
-let loggedIn = false;
+let currentUser = null;
 let cartCount = 0;
 
-// Screens
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('visible'));
-  document.getElementById(id).classList.add('visible');
-}
-function showStart(){ showScreen('startScreen'); }
-function showRegister(){ showScreen('registerScreen'); }
-function showLogin(){ showScreen('loginScreen'); }
-function enterShop(){ showScreen('shopScreen'); loggedIn=true; }
+function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }
+function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; }
+function enterShop(){ document.getElementById('startScreen').style.display='none'; document.getElementById('shop').style.display='block'; }
 
-// Registration
 function registerUser(){
-  let email = document.getElementById('regEmail').value;
-  let pass = document.getElementById('regPass').value;
-  let pass2 = document.getElementById('regPass2').value;
-  if(!email || !pass || !pass2){ alert('Alle Felder ausfüllen!'); return; }
-  if(pass!==pass2){ alert('Passwörter stimmen nicht überein!'); return; }
-  if(users.find(u=>u.email===email)){ alert('Email bereits vorhanden!'); return; }
-  users.push({email, pass});
-  alert('Erfolgreiche Registrierung!\nSie haben sich erfolgreich einen Account zugelegt, viel Spaß beim Shopen!');
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const adresse = document.getElementById('regAdresse').value;
+  if(pass !== pass2){ alert('Passwörter stimmen nicht überein!'); return; }
+  if(users.find(u=>u.email===email)){ alert('Diese Email ist bereits registriert!'); return; }
+  if(adresse.length<5){ alert('Adresse ungültig!'); return; }
+  users.push({email:email, pass:pass, adresse:adresse});
+  alert('Erfolgreiche Registrierung! Sie haben sich erfolgreich einen Account zugelegt. Viel Spaß beim Shopen!');
   showLogin();
 }
 
-// Login
 function loginUser(){
-  let email = document.getElementById('loginEmail').value;
-  let pass = document.getElementById('loginPass').value;
-  let user = users.find(u=>u.email===email && u.pass===pass);
-  if(user){ loggedIn=true; showScreen('shopScreen'); } 
-  else{ alert('Falsche Daten!'); }
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  const user = users.find(u=>u.email===email && u.pass===pass);
+  if(user){ currentUser=user; enterShop(); }
+  else alert('Falsche Daten!');
 }
 
-// Warenkorb
 function buyProduct(name){
-  if(!loggedIn){ showLogin(); window.scrollTo(0,0); return; }
-  cartCount++;
-  let cartSpan = document.getElementById('cartCount');
-  cartSpan.style.display='flex';
-  cartSpan.innerText = cartCount;
-  window.location.href = "mailto:online.shop551552@gmail.com?subject=Bestellung&body=Ich möchte "+encodeURIComponent(name)+" kaufen";
+  if(!currentUser){ alert('Bitte anmelden!'); showLogin(); window.scrollTo(0,0); return; }
+  cartCount++; document.getElementById('cartCount').innerText=cartCount;
+  window.location.href = `mailto:online.shop551552@gmail.com?subject=Bestellung&body=Ich möchte ${encodeURIComponent(name)} kaufen`;
 }
 
-// Search
-function searchProducts(){
-  let input = document.getElementById('searchInput').value.toLowerCase();
-  document.querySelectorAll('.produkt').forEach(p=>{
-    let name = p.getAttribute('data-name').toLowerCase();
-    p.style.display = name.includes(input)?'block':'none';
-  });
-}
+// Einfaches Produkt-View (Popup)
+function viewProduct(name){ alert('Hier sollte die Produktbeschreibung und Bilder für '+name+' angezeigt werden.'); }
 
 // Warenkorb verschiebbar
-let cart = document.getElementById('cart');
-let isDragging=false, offsetX, offsetY;
-cart.addEventListener('mousedown', e=>{
-  isDragging=true;
-  offsetX=e.clientX - cart.offsetLeft;
-  offsetY=e.clientY - cart.offsetTop;
-});
+const cart = document.getElementById('cart');
+let offsetX, offsetY, isDragging=false;
+cart.addEventListener('mousedown', e=>{ isDragging=true; offsetX=e.offsetX; offsetY=e.offsetY; });
 document.addEventListener('mousemove', e=>{
   if(isDragging){
-    let x=e.clientX - offsetX;
-    let y=e.clientY - offsetY;
-    x=Math.min(window.innerWidth-60, Math.max(0,x));
-    y=Math.min(window.innerHeight-60, Math.max(0,y));
-    cart.style.left=x+'px';
-    cart.style.top=y+'px';
-    cart.style.bottom='auto';
-    cart.style.right='auto';
+    let x=e.clientX-offsetX;
+    let y=e.clientY-offsetY;
+    const maxX=window.innerWidth-cart.offsetWidth; const maxY=window.innerHeight-cart.offsetHeight;
+    if(x<0)x=0; if(y<0)y=0; if(x>maxX)x=maxX; if(y>maxY)y=maxY;
+    cart.style.left=x+'px'; cart.style.top=y+'px';
   }
 });
-document.addEventListener('mouseup', ()=>{isDragging=false;});
+document.addEventListener('mouseup', e=>{ isDragging=false; });
 </script>
 
 </body>
