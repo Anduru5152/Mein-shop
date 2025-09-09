@@ -1,223 +1,282 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mein Shop</title>
-<style>
-  body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
-  /* Startbildschirm */
-  #startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; }
-  .btn { padding:12px 25px; margin:10px; color:white; background:#28a745; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-  .btn:hover { background:#218838; }
-  .linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; margin-top:15px; display:inline-block; }
-  input { width:250px; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
-  .box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
-  /* Shop */
-  #shop { display:none; padding:20px; max-width:900px; margin:auto; }
-  h1 { text-align:center; margin-bottom:20px; }
-  .produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-  .produkt { border:1px solid #ccc; border-radius:8px; width:42%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
-  .produkt:hover { box-shadow:0 0 10px #888; }
-  .produkt img { width:100%; border-radius:5px; }
-  .name { font-weight:bold; margin:10px 0 5px; }
-  .preis { color:green; font-size:1.2em; margin-bottom:10px; }
-  /* Detailansicht */
-  .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:1000; }
-  .modalContent { background:white; padding:20px; border-radius:8px; max-width:700px; width:90%; position:relative; }
-  .closeModal { position:absolute; top:10px; right:10px; cursor:pointer; font-size:20px; }
-  .slider { position: relative; overflow: hidden; border-radius:8px; background:white; }
-  .slides { display:flex; transition: transform 0.4s ease-in-out; }
-  .slides img { width:100%; flex-shrink:0; }
-  .arrow { position:absolute; top:50%; transform: translateY(-50%); background-color: rgba(0,0,0,0.5); color:white; border:none; padding:10px; cursor:pointer; border-radius:50%; font-size:22px; z-index:10; }
-  .arrow-left { left:10px; }
-  .arrow-right { right:10px; }
-  /* Warenkorb */
-  #cart { position:fixed; bottom:20px; right:20px; width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; }
-  #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Shop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    h1 { text-align: center; margin: 20px 0; }
+    .produkte {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+    .produkt {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 42%;
+      box-sizing: border-box;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: box-shadow 0.3s;
+      background: white;
+    }
+    .produkt:hover { box-shadow: 0 0 10px #888; }
+    .produkt img { max-width: 100%; border-radius: 5px; }
+    .name { font-weight: bold; margin: 10px 0 5px; }
+    .preis { color: green; font-size: 1.2em; margin-bottom: 10px; }
+
+    /* Warenkorb Button */
+    #cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: white;
+      border: 2px solid orange;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: move;
+      z-index: 1000;
+    }
+    #cartCount {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background: orange;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Detail-Fenster (fullscreen) */
+    #productDetail {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: #000;
+      z-index: 2000;
+      overflow-y: auto;
+    }
+    .detailContent {
+      background: #fff;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .detailImages img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+    .closeBtn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .buyBtn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+    .buyBtn:hover { background: #218838; }
+  </style>
 </head>
 <body>
 
-<!-- Startbildschirm -->
-<div id="startScreen">
-  <h1>Willkommen!</h1>
-  <div>Bist du zum ersten Mal hier?</div>
-  <button class="btn" onclick="showRegister()">Registrieren</button>
-  <div>Du hast bereits ein Konto?</div>
-  <button class="btn" onclick="showLogin()">Anmelden</button>
-  <div class="linkBlue" onclick="enterShop()">Ohne Anmeldung fortfahren</div>
-</div>
+<h1>Mein Shop</h1>
 
-<!-- Registrieren -->
-<div id="registerScreen" style="display:none;">
-  <h2>Registrieren</h2>
-  <div class="box">
-    <input type="text" id="regVorname" placeholder="Vorname"><br>
-    <input type="text" id="regNachname" placeholder="Nachname"><br>
-    <input type="text" id="regAdresse" placeholder="Straße, Hausnummer, PLZ"><br>
-    <input type="email" id="regEmail" placeholder="Email-Adresse"><br>
-    <input type="password" id="regPass" placeholder="Passwort"><br>
-    <input type="password" id="regPass2" placeholder="Passwort wiederholen"><br>
-    <button class="btn" onclick="registerUser()">Registrieren</button>
-    <div class="linkBlue" onclick="showLogin()">Bereits ein Konto? Anmelden</div>
+<div class="produkte">
+  <div class="produkt" onclick="showDetail(1)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
+    <div class="name">Produkt 1</div>
+    <div class="preis">29,99 €</div>
   </div>
-</div>
-
-<!-- Anmelden -->
-<div id="loginScreen" style="display:none;">
-  <h2>Anmelden</h2>
-  <div class="box">
-    <input type="email" id="loginEmail" placeholder="Email-Adresse"><br>
-    <input type="password" id="loginPass" placeholder="Passwort"><br>
-    <button class="btn" onclick="loginUser()">Anmelden</button>
-    <div class="linkBlue" onclick="showRegister()">Noch kein Konto? Registrieren</div>
+  <div class="produkt" onclick="showDetail(2)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
+    <div class="name">Produkt 2</div>
+    <div class="preis">19,99 €</div>
   </div>
-</div>
-
-<!-- Shop -->
-<div id="shop">
-  <h1>Mein Shop</h1>
-  <div class="produkte" id="produkteContainer">
-    <!-- Produkt 1 -->
-    <div class="produkt" data-name="Produkt 1" onclick="viewProduct(0)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
-      <div class="name">Produkt 1</div>
-      <div class="preis">29,99 €</div>
-      <button onclick="buyProduct('Produkt 1'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
-    <!-- Produkt 2 -->
-    <div class="produkt" data-name="Produkt 2" onclick="viewProduct(1)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
-      <div class="name">Produkt 2</div>
-      <div class="preis">19,99 €</div>
-      <button onclick="buyProduct('Produkt 2'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
-    <!-- Produkt 3 -->
-    <div class="produkt" data-name="Produkt 3" onclick="viewProduct(2)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
-      <div class="name">Produkt 3</div>
-      <div class="preis">39,99 €</div>
-      <button onclick="buyProduct('Produkt 3'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
-    <!-- Produkt 4 -->
-    <div class="produkt" data-name="Produkt 4" onclick="viewProduct(3)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4">
-      <div class="name">Produkt 4</div>
-      <div class="preis">59,99 €</div>
-      <button onclick="buyProduct('Produkt 4'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
-    <!-- Produkt 5 -->
-    <div class="produkt" data-name="Produkt 5" onclick="viewProduct(4)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5">
-      <div class="name">Produkt 5</div>
-      <div class="preis">39,99 €</div>
-      <button onclick="buyProduct('Produkt 5'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
-    <!-- Produkt 6 -->
-    <div class="produkt" data-name="Produkt 6" onclick="viewProduct(5)">
-      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6">
-      <div class="name">Produkt 6</div>
-      <div class="preis">49,99 €</div>
-      <button onclick="buyProduct('Produkt 6'); event.stopPropagation()">Jetzt kaufen</button>
-    </div>
+  <div class="produkt" onclick="showDetail(3)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
+    <div class="name">Produkt 3</div>
+    <div class="preis">39,99 €</div>
   </div>
-</div>
-
-<!-- Detailansicht Modal -->
-<div class="modal" id="productModal">
-  <div class="modalContent">
-    <span class="closeModal" onclick="closeModal()">&times;</span>
-    <h2 id="modalName"></h2>
-    <div class="preis" id="modalPrice"></div>
-    <div class="slider" id="modalSlider">
-      <div class="slides" id="modalSlides"></div>
-      <button class="arrow arrow-left" onclick="prevSlide()">&#10094;</button>
-      <button class="arrow arrow-right" onclick="nextSlide()">&#10095;</button>
-    </div>
-    <div class="beschreibung" id="modalDesc"></div>
+  <div class="produkt" onclick="showDetail(4)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4">
+    <div class="name">Produkt 4</div>
+    <div class="preis">24,99 €</div>
+  </div>
+  <div class="produkt" onclick="showDetail(5)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5">
+    <div class="name">Produkt 5</div>
+    <div class="preis">14,99 €</div>
+  </div>
+  <div class="produkt" onclick="showDetail(6)">
+    <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6">
+    <div class="name">Produkt 6</div>
+    <div class="preis">49,99 €</div>
   </div>
 </div>
 
 <!-- Warenkorb -->
-<div id="cart"><img src="https://img.icons8.com/ios-glyphs/30/000000/shopping-cart.png"/><span id="cartCount">0</span></div>
+<div id="cart">
+  🛒
+  <span id="cartCount">0</span>
+</div>
+
+<!-- Detailansicht -->
+<div id="productDetail">
+  <div class="detailContent">
+    <h2 id="detailTitle"></h2>
+    <div class="detailImages" id="detailImages"></div>
+    <p id="detailDescription"></p>
+    <button class="buyBtn" onclick="buyProduct()">Jetzt kaufen</button>
+    <button class="closeBtn" onclick="closeDetail()">Schließen</button>
+  </div>
+</div>
 
 <script>
-let users = [];
-let currentUser = null;
-let cartCount = 0;
+  let cartCount = 0;
+  let currentProduct = null;
 
-const products = [
-  {name:"Produkt 1", price:"29,99 €", desc:"Beschreibung Produkt 1", images:["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2","https://via.placeholder.com/600x400?text=Produkt+1+Bild+3"]},
-  {name:"Produkt 2", price:"19,99 €", desc:"Beschreibung Produkt 2", images:["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2","https://via.placeholder.com/600x400?text=Produkt+2+Bild+3"]},
-  {name:"Produkt 3", price:"39,99 €", desc:"Beschreibung Produkt 3", images:["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2","https://via.placeholder.com/600x400?text=Produkt+3+Bild+3"]},
-  {name:"Produkt 4", price:"59,99 €", desc:"Beschreibung Produkt 4", images:["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2","https://via.placeholder.com/600x400?text=Produkt+4+Bild+3"]},
-  {name:"Produkt 5", price:"39,99 €", desc:"Beschreibung Produkt 5", images:["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2","https://via.placeholder.com/600x400?text=Produkt+5+Bild+3"]},
-  {name:"Produkt 6", price:"49,99 €", desc:"Beschreibung Produkt 6", images:["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2","https://via.placeholder.com/600x400?text=Produkt+6+Bild+3"]}
-];
+  const products = {
+    1: {
+      name: "Produkt 1",
+      price: "29,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+1+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+1+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 1. Hochwertig und günstig."
+    },
+    2: {
+      name: "Produkt 2",
+      price: "19,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+2+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+2+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 2. Praktisch und beliebt."
+    },
+    3: {
+      name: "Produkt 3",
+      price: "39,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+3+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+3+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 3. Robust und modern."
+    },
+    4: {
+      name: "Produkt 4",
+      price: "24,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+4+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+4+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 4. Elegant und nützlich."
+    },
+    5: {
+      name: "Produkt 5",
+      price: "14,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+5+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+5+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 5. Preiswert und beliebt."
+    },
+    6: {
+      name: "Produkt 6",
+      price: "49,99 €",
+      images: [
+        "https://via.placeholder.com/400x250?text=Produkt+6+Bild+1",
+        "https://via.placeholder.com/400x250?text=Produkt+6+Bild+2"
+      ],
+      description: "Beschreibung von Produkt 6. Premium-Qualität."
+    }
+  };
 
-function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }
-function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; }
-function enterShop(){ document.getElementById('startScreen').style.display='none'; document.getElementById('shop').style.display='block'; }
+  function showDetail(id) {
+    currentProduct = products[id];
+    document.getElementById("detailTitle").innerText = currentProduct.name + " - " + currentProduct.price;
+    document.getElementById("detailDescription").innerText = currentProduct.description;
 
-function registerUser(){
-  let v = document.getElementById('regVorname').value;
-  let n = document.getElementById('regNachname').value;
-  let a = document.getElementById('regAdresse').value;
-  let e = document.getElementById('regEmail').value;
-  let p = document.getElementById('regPass').value;
-  let p2 = document.getElementById('regPass2').value;
-  if(p!==p2){ alert("Passwörter stimmen nicht überein!"); return; }
-  users.push({vorname:v,nachname:n,adresse:a,email:e,pass:p});
-  alert("Registrierung erfolgreich!");
-  showLogin();
-}
+    const imgContainer = document.getElementById("detailImages");
+    imgContainer.innerHTML = "";
+    currentProduct.images.forEach(src => {
+      const img = document.createElement("img");
+      img.src = src;
+      imgContainer.appendChild(img);
+    });
 
-function loginUser(){
-  let e = document.getElementById('loginEmail').value;
-  let p = document.getElementById('loginPass').value;
-  let u = users.find(user=>user.email===e && user.pass===p);
-  if(u){ currentUser=u; enterShop(); }
-  else alert("Falsche Email oder Passwort!");
-}
+    document.getElementById("productDetail").style.display = "block";
+  }
 
-function viewProduct(i){
-  const modal = document.getElementById('productModal');
-  document.getElementById('modalName').innerText = products[i].name;
-  document.getElementById('modalPrice').innerText = products[i].price;
-  document.getElementById('modalDesc').innerText = products[i].desc;
-  const slides = document.getElementById('modalSlides');
-  slides.innerHTML = '';
-  products[i].images.forEach(src=>{
-    let img=document.createElement('img'); img.src=src; slides.appendChild(img);
-  });
-  currentSlide=0; showSlide();
-  modal.style.display='flex';
-}
+  function closeDetail() {
+    document.getElementById("productDetail").style.display = "none";
+  }
 
-function closeModal(){ document.getElementById('productModal').style.display='none'; }
+  function buyProduct() {
+    cartCount++;
+    const counter = document.getElementById("cartCount");
+    counter.style.display = "inline-block";
+    counter.innerText = cartCount;
+    alert("Hallo, ich möchte " + currentProduct.name + " kaufen 😁");
+  }
 
-function buyProduct(name){ cartCount++; document.getElementById('cartCount').innerText = cartCount; alert(name+" wurde dem Warenkorb hinzugefügt!"); }
+  // Drag für Warenkorb, nur am Rand
+  const cart = document.getElementById("cart");
+  cart.onmousedown = function(e) {
+    let shiftX = e.clientX - cart.getBoundingClientRect().left;
+    let shiftY = e.clientY - cart.getBoundingClientRect().top;
 
-/* Slider */
-let currentSlide = 0;
-function showSlide(){
-  const slides=document.getElementById('modalSlides');
-  slides.style.transform=`translateX(-${currentSlide*100}%)`;
-}
-function nextSlide(){
-  currentSlide++; if(currentSlide>=document.getElementById('modalSlides').children.length) currentSlide=0; showSlide();
-}
-function prevSlide(){
-  currentSlide--; if(currentSlide<0) currentSlide=document.getElementById('modalSlides').children.length-1; showSlide();
-}
+    function moveAt(pageX, pageY) {
+      let x = Math.min(window.innerWidth - cart.offsetWidth, Math.max(0, pageX - shiftX));
+      let y = Math.min(window.innerHeight - cart.offsetHeight, Math.max(0, pageY - shiftY));
+      cart.style.left = x + "px";
+      cart.style.top = y + "px";
+      cart.style.bottom = "auto";
+      cart.style.right = "auto";
+      cart.style.position = "fixed";
+    }
 
-/* Drag Warenkorb */
-const cart=document.getElementById('cart');
-let offsetX, offsetY, isDown=false;
-cart.addEventListener('mousedown', e=>{ isDown=true; offsetX=e.offsetX; offsetY=e.offsetY; cart.style.cursor='grabbing'; });
-document.addEventListener('mouseup', e=>{ isDown=false; cart.style.cursor='grab'; });
-document.addEventListener('mousemove', e=>{ if(isDown){ cart.style.left=(e.pageX-offsetX)+'px'; cart.style.top=(e.pageY-offsetY)+'px'; } });
+    function onMouseMove(e) { moveAt(e.pageX, e.pageY); }
+    document.addEventListener('mousemove', onMouseMove);
+    cart.onmouseup = function() {
+      document.removeEventListener('mousemove', onMouseMove);
+      cart.onmouseup = null;
+    };
+  };
+  cart.ondragstart = () => false;
 </script>
 
 </body>
