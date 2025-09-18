@@ -15,36 +15,37 @@
   .box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
 
   /* Shop */
-  #shop { display:none; padding:20px; max-width:900px; margin:auto; }
+  #shop { display:none; padding:20px; max-width:1000px; margin:auto; }
   h1 { text-align:center; margin-bottom:20px; }
   .produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-  .produkt { border:1px solid #ccc; border-radius:8px; width:42%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
+  .produkt { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
   .produkt:hover { box-shadow:0 0 10px #888; }
   .produkt img { width:100%; border-radius:5px; }
   .name { font-weight:bold; margin:10px 0 5px; }
   .preis { color:green; font-size:1.2em; margin-bottom:10px; }
+  .produkt button { margin-top:5px; padding:8px 15px; background:orange; border:none; color:white; border-radius:5px; cursor:pointer; }
+  .produkt button:hover { background:#e67e22; }
 
   /* Warenkorb */
   #cart { position:fixed; top:50%; transform:translateY(-50%); width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; transition:left 0.2s, right 0.2s; }
   #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
+
+  /* Warenkorb Detail Fullscreen */
+  #cartDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
+  #cartDetail h2 { text-align:center; }
+  #cartDetail .produkte { flex-wrap:wrap; }
+  #cartDetail .produkt button { background:green; }
+  #cartDetail .gesamt { font-size:1.2em; text-align:center; margin:20px; }
+  #cartDetail .alleKaufen { display:block; margin:0 auto 20px auto; padding:12px 25px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; }
+  #cartDetail .alleKaufen:hover { background:#218838; }
 
   /* Detailansicht fullscreen */
   #productDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
   #productDetail h2 { text-align:center; }
   #productDetail .preis { font-size:1.5em; text-align:center; margin:10px 0; }
   #productDetail img { width:100%; max-width:600px; display:block; margin:10px auto; border-radius:8px; }
-  #productDetail button { display:block; margin:20px auto; }
-
-  /* Warenkorb fullscreen */
-  #cartScreen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
-  #cartScreen h2 { text-align:center; margin-bottom:20px; }
-  #cartScreen .produkteCart { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-  #cartScreen .produktCart { border:1px solid #ccc; border-radius:8px; width:42%; padding:10px; text-align:center; background:white; }
-  #cartScreen .produktCart img { width:100%; border-radius:5px; }
-  #cartScreen .name, #cartScreen .preis { margin:10px 0; }
-  #cartScreen .bottomCart { text-align:center; margin-top:20px; }
-  #cartScreen .bottomCart button { margin:5px; }
-
+  #productDetail button { display:block; margin:20px auto; padding:12px 25px; background:orange; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+  #productDetail button:hover { background:#e67e22; }
 </style>
 </head>
 <body>
@@ -89,126 +90,135 @@
 <div id="shop">
   <h1>Mein Shop</h1>
   <div class="produkte" id="produkteContainer">
-    <div class="produkt" data-name="Produkt 1" data-preis="29,99" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2"]'>
+    <div class="produkt" data-name="Produkt 1" data-preis="29,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2","https://via.placeholder.com/600x400?text=Produkt+1+Bild+3"]'>
       <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
       <div class="name">Produkt 1</div>
       <div class="preis">29,99 €</div>
     </div>
-    <div class="produkt" data-name="Produkt 2" data-preis="19,99" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2"]'>
+    <div class="produkt" data-name="Produkt 2" data-preis="19,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2","https://via.placeholder.com/600x400?text=Produkt+2+Bild+3"]'>
       <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
       <div class="name">Produkt 2</div>
       <div class="preis">19,99 €</div>
     </div>
+    <div class="produkt" data-name="Produkt 3" data-preis="39,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2","https://via.placeholder.com/600x400?text=Produkt+3+Bild+3"]'>
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
+      <div class="name">Produkt 3</div>
+      <div class="preis">39,99 €</div>
+    </div>
+    <div class="produkt" data-name="Produkt 4" data-preis="59,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2","https://via.placeholder.com/600x400?text=Produkt+4+Bild+3"]'>
+      <img src="https://via.placeholder.com/300x200?text=Produkt+4" alt="Produkt 4">
+      <div class="name">Produkt 4</div>
+      <div class="preis">59,99 €</div>
+    </div>
+    <div class="produkt" data-name="Produkt 5" data-preis="49,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2","https://via.placeholder.com/600x400?text=Produkt+5+Bild+3"]'>
+      <img src="https://via.placeholder.com/300x200?text=Produkt+5" alt="Produkt 5">
+      <div class="name">Produkt 5</div>
+      <div class="preis">49,99 €</div>
+    </div>
+    <div class="produkt" data-name="Produkt 6" data-preis="24,99 €" data-bilder='["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2","https://via.placeholder.com/600x400?text=Produkt+6+Bild+3"]'>
+      <img src="https://via.placeholder.com/300x200?text=Produkt+6" alt="Produkt 6">
+      <div class="name">Produkt 6</div>
+      <div class="preis">24,99 €</div>
+    </div>
   </div>
-</div>
-
-<!-- Warenkorb Button -->
-<div id="cart" onclick="openCart()">
-  🛒<span id="cartCount">0</span>
 </div>
 
 <!-- Detailansicht -->
 <div id="productDetail">
   <h2 id="detailName"></h2>
-  <div class="preis" id="detailPrice"></div>
-  <div id="detailImages"></div>
-  <button id="addToCartBtn">In Warenkorb legen</button>
-  <button class="btn" onclick="closeDetail()">Zurück</button>
+  <div class="preis" id="detailPreis"></div>
+  <div id="detailBilder"></div>
+  <button onclick="addToCart()">In Warenkorb legen</button>
 </div>
 
-<!-- Warenkorb fullscreen -->
-<div id="cartScreen">
-  <h2>Dein Warenkorb</h2>
-  <div id="cartContent"></div>
-  <div class="bottomCart">
-    <div id="gesamtPreis">Gesamt: 0 €</div>
-    <button onclick="buyAll()" class="btn">Alle Produkte kaufen</button>
-    <button onclick="closeCart()" class="btn">Weiter shoppen</button>
-  </div>
+<!-- Warenkorb -->
+<div id="cart" onmousedown="startDrag(event)">
+  🛒 <span id="cartCount">0</span>
+</div>
+
+<!-- Warenkorb Fullscreen -->
+<div id="cartDetail">
+  <h2>Warenkorb</h2>
+  <div class="produkte" id="cartItems"></div>
+  <div class="gesamt">Gesamt: <span id="gesamtPreis">0,00 €</span></div>
+  <button class="alleKaufen" onclick="buyAll()">Alle Produkte kaufen</button>
 </div>
 
 <script>
+let currentProduct = null;
 let cart = [];
 
-// Screens
-function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }
-function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; }
+function showRegister(){ document.getElementById('startScreen').style.display='none'; document.getElementById('registerScreen').style.display='flex'; }
+function showLogin(){ document.getElementById('startScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }
 function enterShop(){ document.getElementById('startScreen').style.display='none'; document.getElementById('shop').style.display='block'; }
-function loginUser(){ enterShop(); }
-function registerUser(){ enterShop(); }
+function registerUser(){ alert('Registriert!'); enterShop(); }
+function loginUser(){ alert('Angemeldet!'); enterShop(); }
 
-// Produkt Detail
-const produkte = document.querySelectorAll('.produkt');
-const detailName = document.getElementById('detailName');
-const detailPrice = document.getElementById('detailPrice');
-const detailImages = document.getElementById('detailImages');
-const addToCartBtn = document.getElementById('addToCartBtn');
-
-produkte.forEach(p => {
-  p.addEventListener('click', ()=>{
-    const name = p.dataset.name;
-    const preis = p.dataset.preis;
-    const bilder = JSON.parse(p.dataset.bilder);
-    detailName.textContent = name;
-    detailPrice.textContent = preis + ' €';
-    detailImages.innerHTML = '';
-    bilder.forEach(b=>{
-      const img = document.createElement('img');
-      img.src = b;
-      detailImages.appendChild(img);
-    });
-    addToCartBtn.onclick = ()=>{ addToCart(name, preis); closeDetail(); };
-    document.getElementById('productDetail').style.display='block';
+const produktDivs = document.querySelectorAll('.produkt');
+produktDivs.forEach(p => {
+  p.addEventListener('click', () => {
+    currentProduct = {name:p.dataset.name, preis:p.dataset.preis, bilder:JSON.parse(p.dataset.bilder)};
+    showProductDetail();
   });
 });
 
-function closeDetail(){ document.getElementById('productDetail').style.display='none'; }
-
-// Warenkorb
-function addToCart(name, preis){
-  cart.push({name, preis});
-  document.getElementById('cartCount').textContent = cart.length;
+function showProductDetail(){
+  document.getElementById('productDetail').style.display='block';
+  document.getElementById('detailName').innerText=currentProduct.name;
+  document.getElementById('detailPreis').innerText=currentProduct.preis;
+  let bilderHTML='';
+  currentProduct.bilder.forEach(b => { bilderHTML+=`<img src="${b}" alt="${currentProduct.name}">`; });
+  document.getElementById('detailBilder').innerHTML=bilderHTML;
 }
 
-function openCart(){
-  document.getElementById('cartScreen').style.display='block';
-  renderCart();
+function addToCart(){
+  cart.push({...currentProduct});
+  document.getElementById('cartCount').innerText=cart.length;
+  document.getElementById('productDetail').style.display='none';
+  updateCartDetail();
 }
 
-function closeCart(){ document.getElementById('cartScreen').style.display='none'; }
-
-function renderCart(){
-  const container = document.getElementById('cartContent');
-  container.innerHTML = '';
-  if(cart.length===0){
-    container.innerHTML = '<p>Warenkorb leer</p>';
-    return;
-  }
-  cart.forEach(p=>{
+function updateCartDetail(){
+  const container = document.getElementById('cartItems');
+  container.innerHTML='';
+  if(cart.length===0){ container.innerHTML='<div>Warenkorb leer</div>'; return; }
+  cart.forEach(p => {
     const div = document.createElement('div');
-    div.className='produktCart';
-    div.innerHTML=`<img src="https://via.placeholder.com/300x200?text=${p.name.replace(" ","+")}"><div class="name">${p.name}</div><div class="preis">${p.preis} €</div><button class="btn" onclick="buySingle('${p.name}')">Jetzt kaufen</button>`;
+    div.className='produkt';
+    div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis}</div><button onclick="alert('Jetzt kaufen: ${p.name}')">Jetzt kaufen</button>`;
     container.appendChild(div);
   });
-  // Gesamtpreis
-  let total = cart.reduce((sum,p)=>sum+parseFloat(p.preis),0);
-  document.getElementById('gesamtPreis').textContent='Gesamt: '+total.toFixed(2)+' €';
+  let gesamt=0;
+  cart.forEach(p=>{
+    let preis=parseFloat(p.preis.replace('€','').replace(',','.'));
+    gesamt+=preis;
+  });
+  document.getElementById('gesamtPreis').innerText=gesamt.toFixed(2).replace('.',',')+' €';
 }
 
-function buySingle(name){
-  alert('Du hast '+name+' gekauft!');
-  cart = cart.filter(p=>p.name!==name);
-  document.getElementById('cartCount').textContent = cart.length;
-  renderCart();
-}
+document.getElementById('cart').addEventListener('click', ()=>{
+  document.getElementById('cartDetail').style.display='block';
+});
 
-function buyAll(){
-  if(cart.length===0){ alert('Warenkorb leer'); return; }
-  alert('Du hast alle Produkte gekauft!');
-  cart=[];
-  document.getElementById('cartCount').textContent = 0;
-  renderCart();
+function buyAll(){ alert('Alle Produkte gekauft!'); cart=[]; updateCartDetail(); document.getElementById('cartCount').innerText=0; document.getElementById('cartDetail').style.display='none'; }
+
+// Drag Warenkorb
+let offsetX, offsetY, dragging=false;
+function startDrag(e){
+  dragging=true;
+  offsetX=e.clientX-e.target.getBoundingClientRect().left;
+  offsetY=e.clientY-e.target.getBoundingClientRect().top;
+  document.addEventListener('mousemove',dragCart);
+  document.addEventListener('mouseup',stopDrag);
 }
+function dragCart(e){
+  if(!dragging) return;
+  let x=e.clientX-offsetX;
+  x=Math.max(0,Math.min(window.innerWidth-60,x));
+  document.getElementById('cart').style.left=(x>window.innerWidth/2?'auto':'0') ;
+  document.getElementById('cart').style.right=(x>window.innerWidth/2?'0':'auto');
+}
+function stopDrag(){ dragging=false; document.removeEventListener('mousemove',dragCart); document.removeEventListener('mouseup',stopDrag); }
 </script>
 
 </body>
