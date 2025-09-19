@@ -1,595 +1,191 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Shop</title>
 <style>
-  :root{
-    --accent: #ff7a00; /* orange */
-    --green: #28a745;
-    --bg: #f7f7f8;
-    --card: #ffffff;
-    --muted: #777;
-  }
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+  h1,h2 { text-align:center; }
+  .btn { padding:12px 20px; margin:10px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; }
+  .btn:hover { background:#218838; }
+  .linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; display:block; margin-top:10px; }
 
-  /* Seite */
-  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#111;}
-  h1{margin:0 0 12px 0;text-align:center;}
-  .hidden{display:none!important;}
+  input { padding:8px; border:1px solid #ccc; border-radius:5px; margin:5px 0; width:250px; }
+  .box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; }
 
-  /* START / LOGIN / REGISTER - Vollbildzentriert */
-  .screen-full {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    height:100vh; text-align:center; padding:20px;
-  }
-  .box { background:var(--card); padding:18px; border-radius:10px; border:1px solid #e0e0e0; width:320px; box-sizing:border-box; }
-  .box input { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #ccc; box-sizing:border-box; }
-  .btn { display:inline-block; padding:10px 16px; border-radius:8px; background:var(--green); color:white; border:0; cursor:pointer; font-weight:600; }
-  .btn.secondary{ background:#007bff; }
-  .linkBlue{ color:#007bff; cursor:pointer; text-decoration:underline; display:inline-block; margin-top:10px; }
+  /* Screens */
+  #startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; }
 
-  /* SHOP - Layout */
-  #shop { display:none; max-width:1100px; margin:28px auto; padding:0 18px 80px; box-sizing:border-box; }
-  .top-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
-  .search { flex:1; max-width:420px; }
-  .search input{ width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
+  /* Shop */
+  #shop { display:none; padding:20px; max-width:1100px; margin:auto; }
+  #searchBar { display:block; margin:0 auto 20px; padding:10px; width:80%; max-width:500px; border:1px solid #ccc; border-radius:5px; }
+  .produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+  .produkt { border:1px solid #ccc; border-radius:8px; width:30%; background:white; padding:10px; cursor:pointer; text-align:center; }
+  .produkt:hover { box-shadow:0 0 10px #aaa; }
+  .produkt img { width:100%; border-radius:5px; }
+  .name { font-weight:bold; margin:10px 0 5px; }
+  .preis { color:green; font-size:1.2em; margin-bottom:10px; }
 
-  .produkte {
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:20px;
-    align-items:start;
-  }
-  @media (max-width:900px){
-    .produkte{ grid-template-columns: repeat(2,1fr); }
-  }
-  @media (max-width:560px){
-    .produkte{ grid-template-columns: 1fr; }
-  }
+  /* Warenkorb */
+  #cart { position:fixed; bottom:20px; right:20px; width:60px; height:60px; background:white; border:3px solid orange; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:30px; z-index:1000; }
+  #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
 
-  .produkt {
-    background:var(--card);
-    border-radius:10px;
-    padding:12px;
-    box-shadow:0 1px 3px rgba(0,0,0,0.05);
-    border:1px solid #e6e6e6;
-    cursor:pointer;
-    transition:transform .16s, box-shadow .16s;
-  }
-  .produkt:hover { transform:translateY(-4px); box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-  .produkt img { width:100%; height:170px; object-fit:cover; border-radius:8px; display:block; }
-  .produkt .name { font-weight:700; margin:10px 0 6px; }
-  .produkt .preis { color:var(--green); font-weight:700; margin-bottom:8px; }
+  /* Detailansicht */
+  #productDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
+  #productDetail img { max-width:600px; width:100%; display:block; margin:10px auto; border-radius:8px; }
+  .slideshow { text-align:center; }
+  .slideshow button { margin:5px; padding:8px; }
 
-  /* Detail Fullscreen */
-  #productDetail {
-    display:none;
-    position:fixed; inset:0; background:#fff; z-index:1500; overflow:auto; padding:28px; box-sizing:border-box;
-  }
-  .detail-wrap{ max-width:980px; margin:0 auto; }
-  .detail-top { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
-  .slideshow { flex:1 1 560px; max-width:640px; position:relative; background:#fff; border-radius:10px; overflow:hidden; border:1px solid #eee; }
-  .slides{ display:flex; transition:transform .28s ease; touch-action:pan-y; user-select:none; }
-  .slides img{ width:100%; height:420px; object-fit:cover; flex-shrink:0; }
-  .slide-btn{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:white; width:44px; height:44px; border-radius:50%; border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .slide-prev{ left:12px; }
-  .slide-next{ right:12px; }
-
-  .detail-info{ flex:1 1 300px; min-width:240px; }
-  .detail-info .preis{ font-size:1.5rem; color:var(--green); margin:6px 0 14px; }
-  .detail-info .desc{ color:var(--muted); line-height:1.45; }
-
-  /* CART CIRCLE (wie vorher) */
-  #cartBtn {
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:64px;
-    height:64px;
-    background:white;
-    border-radius:50%;
-    border:4px solid var(--accent);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:1400;
-    cursor:grab;
-    box-shadow:0 6px 20px rgba(0,0,0,0.12);
-  }
-  #cartBtn .emoji{ font-size:26px; line-height:1; }
-  #cartBtn .badge {
-    position:absolute;
-    top:-6px;
-    right:-6px;
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    background:var(--accent);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    font-weight:700;
-    box-shadow:0 2px 6px rgba(0,0,0,0.18);
-  }
-
-  /* CART PAGE fullscreen */
-  #cartPage {
-    display:none; position:fixed; inset:0; background:white; z-index:1600; overflow:auto; padding:28px; box-sizing:border-box;
-  }
-  #cartPage .wrap{ max-width:1100px; margin:0 auto; }
-  #cartPage .cart-top { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  #cartPage .cart-items { margin-top:18px; display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
-  @media (max-width:900px){ #cartPage .cart-items{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width:560px){ #cartPage .cart-items{ grid-template-columns: 1fr; } }
-
-  .cart-card { background:var(--card); border-radius:10px; padding:12px; border:1px solid #eaeaea; text-align:center; }
-  .cart-card img{ width:100%; height:170px; object-fit:cover; border-radius:6px; }
-  .cart-card .name{ font-weight:700; margin:8px 0 6px; }
-  .cart-card .preis{ color:var(--green); font-weight:700; margin-bottom:8px; }
-  .cart-card button{ background:var(--green); color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; }
-
-  .cart-actions { text-align:center; margin:22px 0; }
-  .cart-actions .total { font-weight:800; margin-bottom:12px; }
-  .cart-actions .btn { margin:8px; }
-
-  /* kleine Hilfen */
-  .muted { color:var(--muted); font-size:0.95rem; }
-
+  /* Warenkorbseite */
+  #cartPage { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
+  #cartPage h2 { margin-top:0; }
+  #cartItems { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+  .cartItem { border:1px solid #ccc; border-radius:8px; width:30%; background:white; padding:10px; text-align:center; }
+  .cartItem img { width:100%; border-radius:5px; }
+  #totalPrice { text-align:center; font-size:1.3em; margin:20px 0; }
 </style>
 </head>
 <body>
 
-<!-- START -->
-<div id="startScreen" class="screen-full">
-  <div>
-    <h1>Willkommen!</h1>
-    <p class="muted">Bist du zum ersten Mal hier?</p>
-    <div style="margin-top:14px;">
-      <button class="btn" onclick="showRegister()">Registrieren</button>
-    </div>
-    <p style="margin-top:18px;" class="muted">Du hast bereits ein Konto?</p>
-    <div>
-      <button class="btn secondary" onclick="showLogin()">Anmelden</button>
-    </div>
-    <div class="linkBlue" style="margin-top:18px;" onclick="enterShop()">Ohne Anmeldung fortfahren</div>
-  </div>
+<!-- Start -->
+<div id="startScreen">
+  <h1>Willkommen!</h1>
+  <button class="btn" onclick="showRegister()">Registrieren</button>
+  <button class="btn" onclick="showLogin()">Anmelden</button>
+  <div class="linkBlue" onclick="enterShop()">Ohne Anmeldung fortfahren</div>
 </div>
 
-<!-- REGISTER -->
-<div id="registerScreen" class="screen-full hidden">
+<!-- Registrieren -->
+<div id="registerScreen" style="display:none;">
+  <h2>Registrieren</h2>
   <div class="box">
-    <h2>Registrieren</h2>
-    <input id="regVor" placeholder="Vorname">
-    <input id="regNach" placeholder="Nachname">
-    <input id="regAdr" placeholder="Straße, Hausnummer, PLZ">
-    <input id="regEmail" placeholder="Email-Adresse" type="email">
-    <input id="regPass" placeholder="Passwort" type="password">
-    <input id="regPass2" placeholder="Passwort wiederholen" type="password">
-    <div style="margin-top:8px;">
-      <button class="btn" onclick="registerUser()">Registrieren</button>
-    </div>
+    <input type="text" id="regName" placeholder="Name"><br>
+    <input type="email" id="regEmail" placeholder="Email"><br>
+    <input type="password" id="regPass" placeholder="Passwort"><br>
+    <input type="password" id="regPass2" placeholder="Passwort wiederholen"><br>
+    <button class="btn" onclick="registerUser()">Registrieren</button>
     <div class="linkBlue" onclick="showLogin()">Bereits ein Konto? Anmelden</div>
   </div>
 </div>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="screen-full hidden">
+<!-- Anmelden -->
+<div id="loginScreen" style="display:none;">
+  <h2>Anmelden</h2>
   <div class="box">
-    <h2>Anmelden</h2>
-    <input id="loginEmail" placeholder="Email-Adresse" type="email">
-    <input id="loginPass" placeholder="Passwort" type="password">
-    <div style="margin-top:8px;">
-      <button class="btn" onclick="loginUser()">Anmelden</button>
-    </div>
+    <input type="email" id="loginEmail" placeholder="Email"><br>
+    <input type="password" id="loginPass" placeholder="Passwort"><br>
+    <button class="btn" onclick="loginUser()">Anmelden</button>
     <div class="linkBlue" onclick="showRegister()">Noch kein Konto? Registrieren</div>
   </div>
 </div>
 
-<!-- SHOP -->
-<div id="shop" class="hidden">
-  <div class="top-row" style="max-width:1100px;margin:10px auto;padding:0 18px;">
-    <div style="display:flex;gap:12px;align-items:center;">
-      <h1 style="margin:0;">Mein Shop</h1>
-      <div class="muted" style="margin-left:8px;">(Demo)</div>
-    </div>
-    <div class="search">
-      <input id="searchInput" placeholder="Produkt suchen..." oninput="filterProducts()">
-    </div>
-  </div>
-
-  <div class="produkte" id="produkteContainer" style="max-width:1100px;margin:0 auto;padding:0 18px 60px;"></div>
-</div>
-
-<!-- CART CIRCLE (wie du mochtest) -->
-<div id="cartBtn" title="Warenkorb (öffnen)" onmousedown="startDragCart(event)" onclick="openCartPage()">
-  <div class="emoji">🛒</div>
-  <div class="badge" id="cartBadge" style="display:none">0</div>
-</div>
-
-<!-- PRODUCT DETAIL FULLSCREEN -->
-<div id="productDetail" class="hidden" aria-hidden="true">
-  <div class="detail-wrap">
-    <button style="border:0;background:transparent;cursor:pointer;font-size:16px;margin-bottom:12px;" onclick="closeDetail()">← Zurück</button>
-    <div class="detail-top">
-      <div class="slideshow">
-        <div class="slides" id="slidesContainer"></div>
-        <button class="slide-btn slide-prev" onclick="prevSlide()">‹</button>
-        <button class="slide-btn slide-next" onclick="nextSlide()">›</button>
-      </div>
-
-      <div class="detail-info">
-        <h2 id="detailTitle">Produkt</h2>
-        <div class="preis" id="detailPrice">0,00 €</div>
-        <div class="desc muted" id="detailDesc">Produktbeschreibung…</div>
-        <div style="margin-top:18px;">
-          <button class="btn" onclick="addCurrentToCart()">In den Warenkorb legen</button>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top:24px;max-width:900px;margin-left:auto;margin-right:auto;" id="detailExtra"></div>
+<!-- Shop -->
+<div id="shop">
+  <h1>Mein Shop</h1>
+  <input type="text" id="searchBar" placeholder="Produkte suchen..." onkeyup="searchProducts()">
+  <div class="produkte" id="produkteContainer">
+    <!-- Produkte -->
   </div>
 </div>
 
-<!-- CART PAGE -->
-<div id="cartPage" class="hidden">
-  <div class="wrap">
-    <div class="cart-top">
-      <h2>Dein Warenkorb</h2>
-      <div>
-        <button class="btn secondary" onclick="closeCartPage()">Weiter shoppen</button>
-      </div>
-    </div>
-
-    <div class="cart-items" id="cartItemsContainer"></div>
-
-    <div class="cart-actions">
-      <div class="total muted">Gesamt: <span id="cartTotal">0,00 €</span></div>
-      <div>
-        <button class="btn" onclick="buyAll()">Alle Produkte kaufen</button>
-        <button class="btn secondary" onclick="closeCartPage()">Weiter shoppen</button>
-      </div>
+<!-- Detail -->
+<div id="productDetail">
+  <h2 id="detailName"></h2>
+  <div class="preis" id="detailPreis"></div>
+  <div class="slideshow">
+    <img id="detailImage" src="">
+    <div>
+      <button onclick="prevImage()">◀</button>
+      <button onclick="nextImage()">▶</button>
     </div>
   </div>
+  <button class="btn" onclick="addToCart(currentProduct)">In den Warenkorb</button>
+  <button class="btn" onclick="closeDetail()">Zurück</button>
 </div>
+
+<!-- Warenkorbseite -->
+<div id="cartPage">
+  <h2>Warenkorb</h2>
+  <div id="cartItems"></div>
+  <div id="totalPrice"></div>
+  <button class="btn" onclick="buyAll()">Alle kaufen</button>
+  <button class="btn" onclick="closeCartPage()">Weiter shoppen</button>
+</div>
+
+<!-- Warenkorb Icon -->
+<div id="cart" onclick="openCartPage()">🛒<span id="cartCount">0</span></div>
 
 <script>
-/* -------------------------
-   DATEN & STATE
-   ------------------------- */
-const PRODUCTS = [
-  {
-    id:1, name:"Produkt 1", price:29.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+1+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+1+-+Bild+2",
-      "https://via.placeholder.com/900x600?text=Produkt+1+-+Bild+3"
-    ],
-    desc:"Ausführliche Beschreibung für Produkt 1. Material, Maße, Hinweise."
-  },
-  {
-    id:2, name:"Produkt 2", price:19.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+2+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+2+-+Bild+2"
-    ],
-    desc:"Beschreibung Produkt 2 - kurze Info."
-  },
-  {
-    id:3, name:"Produkt 3", price:39.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+3+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+3+-+Bild+2",
-      "https://via.placeholder.com/900x600?text=Produkt+3+-+Bild+3"
-    ],
-    desc:"Beschreibung Produkt 3 - Features und Details."
-  },
-  {
-    id:4, name:"Produkt 4", price:59.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+4+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+4+-+Bild+2"
-    ],
-    desc:"Beschreibung Produkt 4 - Premium Artikel."
-  },
-  {
-    id:5, name:"Produkt 5", price:49.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+5+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+5+-+Bild+2",
-      "https://via.placeholder.com/900x600?text=Produkt+5+-+Bild+3"
-    ],
-    desc:"Beschreibung Produkt 5 - tolle Eigenschaften."
-  },
-  {
-    id:6, name:"Produkt 6", price:24.99,
-    images:[
-      "https://via.placeholder.com/900x600?text=Produkt+6+-+Bild+1",
-      "https://via.placeholder.com/900x600?text=Produkt+6+-+Bild+2"
-    ],
-    desc:"Beschreibung Produkt 6 - günstiger Klassiker."
-  }
+let products = [
+  {name:"Produkt 1", preis:29.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2"]},
+  {name:"Produkt 2", preis:19.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2"]},
+  {name:"Produkt 3", preis:39.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2"]},
+  {name:"Produkt 4", preis:59.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2"]},
+  {name:"Produkt 5", preis:49.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2"]},
+  {name:"Produkt 6", preis:9.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2"]}
 ];
 
-let CART = []; // array of product ids (can store duplicates)
-let currentDetail = { product:null, slideIndex:0 };
+let cart = [];
+let currentProduct = null;
+let currentImageIndex = 0;
 
-/* -------------------------
-   HELPERS
-   ------------------------- */
-function formatPrice(n){
-  return n.toFixed(2).replace('.',',') + ' €';
-}
-function updateCartBadge(){
-  const badge = document.getElementById('cartBadge');
-  if(CART.length === 0){ badge.style.display='none'; }
-  else { badge.style.display='flex'; badge.textContent = CART.length; }
-}
+function showRegister(){ document.getElementById("startScreen").style.display="none"; document.getElementById("loginScreen").style.display="none"; document.getElementById("registerScreen").style.display="flex"; }
+function showLogin(){ document.getElementById("startScreen").style.display="none"; document.getElementById("registerScreen").style.display="none"; document.getElementById("loginScreen").style.display="flex"; }
+function enterShop(){ document.getElementById("startScreen").style.display="none"; document.getElementById("shop").style.display="block"; renderProducts(); }
 
-/* -------------------------
-   RENDER SHOP
-   ------------------------- */
-function renderShop(list = PRODUCTS){
-  const container = document.getElementById('produkteContainer');
-  container.innerHTML = '';
-  list.forEach(p=>{
-    const card = document.createElement('div');
-    card.className = 'produkt';
-    card.innerHTML = `
-      <img src="${p.images[0]}" alt="${escapeHtml(p.name)}">
-      <div class="name">${escapeHtml(p.name)}</div>
-      <div class="preis">${formatPrice(p.price)}</div>
-    `;
-    card.addEventListener('click', ()=> openDetail(p.id));
-    container.appendChild(card);
+function registerUser(){ alert("Registrierung erfolgreich!"); enterShop(); }
+function loginUser(){ alert("Anmeldung erfolgreich!"); enterShop(); }
+
+function renderProducts(){
+  let c=document.getElementById("produkteContainer"); c.innerHTML="";
+  products.forEach((p,i)=>{
+    let d=document.createElement("div");
+    d.className="produkt";
+    d.innerHTML=`<img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
+    d.onclick=()=>openDetail(p);
+    c.appendChild(d);
   });
 }
 
-/* -------------------------
-   DETAIL VIEW (FULLSCREEN) - SLIDESHOW + TOUCH
-   ------------------------- */
-function openDetail(productId){
-  const p = PRODUCTS.find(x=>x.id===productId);
-  if(!p) return;
-  currentDetail.product = p;
-  currentDetail.slideIndex = 0;
-  document.getElementById('detailTitle').innerText = p.name;
-  document.getElementById('detailPrice').innerText = formatPrice(p.price);
-  document.getElementById('detailDesc').innerText = p.desc;
-
-  // Slides
-  const slides = document.getElementById('slidesContainer');
-  slides.innerHTML = '';
-  p.images.forEach(src=>{
-    const img = document.createElement('img');
-    img.src = src;
-    slides.appendChild(img);
-  });
-  updateSlidesPosition();
-
-  // add touch/swipe support
-  enableSlideTouch();
-
-  document.getElementById('productDetail').classList.remove('hidden');
-  document.getElementById('productDetail').style.display = 'block';
-  window.scrollTo(0,0);
+function openDetail(p){
+  currentProduct=p; currentImageIndex=0;
+  document.getElementById("detailName").innerText=p.name;
+  document.getElementById("detailPreis").innerText=p.preis.toFixed(2)+" €";
+  document.getElementById("detailImage").src=p.bilder[0];
+  document.getElementById("productDetail").style.display="block";
 }
-function closeDetail(){
-  document.getElementById('productDetail').classList.add('hidden');
-  document.getElementById('productDetail').style.display = 'none';
-  currentDetail.product = null;
-}
-function updateSlidesPosition(){
-  const slides = document.getElementById('slidesContainer');
-  slides.style.transform = `translateX(-${currentDetail.slideIndex * 100}%)`;
-}
-function prevSlide(){
-  if(!currentDetail.product) return;
-  currentDetail.slideIndex = (currentDetail.slideIndex - 1 + currentDetail.product.images.length) % currentDetail.product.images.length;
-  updateSlidesPosition();
-}
-function nextSlide(){
-  if(!currentDetail.product) return;
-  currentDetail.slideIndex = (currentDetail.slideIndex + 1) % currentDetail.product.images.length;
-  updateSlidesPosition();
-}
+function closeDetail(){ document.getElementById("productDetail").style.display="none"; }
 
-/* touch swipe implementation */
-let touchStartX = null;
-function enableSlideTouch(){
-  const slides = document.getElementById('slidesContainer');
-  // remove previous listeners by cloning
-  const clone = slides.cloneNode(true);
-  slides.parentNode.replaceChild(clone, slides);
+function nextImage(){ if(currentProduct){ currentImageIndex=(currentImageIndex+1)%currentProduct.bilder.length; document.getElementById("detailImage").src=currentProduct.bilder[currentImageIndex]; } }
+function prevImage(){ if(currentProduct){ currentImageIndex=(currentImageIndex-1+currentProduct.bilder.length)%currentProduct.bilder.length; document.getElementById("detailImage").src=currentProduct.bilder[currentImageIndex]; } }
 
-  clone.addEventListener('touchstart', e=>{
-    touchStartX = e.touches[0].clientX;
-  }, {passive:true});
-  clone.addEventListener('touchmove', e=>{
-    if(touchStartX === null) return;
-    const dx = e.touches[0].clientX - touchStartX;
-    // we don't do follow-drag, only threshold
-  }, {passive:true});
-  clone.addEventListener('touchend', e=>{
-    if(touchStartX === null) return;
-    const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : null;
-    if(endX === null){ touchStartX = null; return; }
-    const diff = endX - touchStartX;
-    if(Math.abs(diff) > 50){
-      if(diff < 0) nextSlide(); else prevSlide();
-    }
-    touchStartX = null;
-  });
-}
+function addToCart(p){ cart.push(p); updateCart(); alert(p.name+" wurde in den Warenkorb gelegt."); }
+function updateCart(){ document.getElementById("cartCount").innerText=cart.length; }
 
-/* add current product to cart */
-function addCurrentToCart(){
-  if(!currentDetail.product) return;
-  CART.push(currentDetail.product.id);
-  updateCartBadge();
-  alert(`${currentDetail.product.name} wurde in den Warenkorb gelegt.`);
-  closeDetail();
-}
-
-/* -------------------------
-   CART PAGE (FULLSCREEN)
-   ------------------------- */
 function openCartPage(){
-  renderCartPage();
-  document.getElementById('cartPage').classList.remove('hidden');
-  document.getElementById('cartPage').style.display = 'block';
-  window.scrollTo(0,0);
+  document.getElementById("cartPage").style.display="block";
+  let c=document.getElementById("cartItems"); c.innerHTML="";
+  if(cart.length===0){ c.innerHTML="<p>Warenkorb leer</p>"; document.getElementById("totalPrice").innerText=""; return; }
+  let sum=0;
+  cart.forEach(p=>{ sum+=p.preis; c.innerHTML+=`<div class="cartItem"><img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div></div>`; });
+  document.getElementById("totalPrice").innerText="Gesamtpreis: "+sum.toFixed(2)+" €";
 }
-function closeCartPage(){
-  document.getElementById('cartPage').classList.add('hidden');
-  document.getElementById('cartPage').style.display = 'none';
-}
+function closeCartPage(){ document.getElementById("cartPage").style.display="none"; }
 
-/* render cart items like shop grid */
-function renderCartPage(){
-  const container = document.getElementById('cartItemsContainer');
-  container.innerHTML = '';
-  if(CART.length === 0){
-    container.innerHTML = `<div style="text-align:center;padding:40px;background:#fff;border-radius:10px;border:1px solid #eee;">Dein Warenkorb ist leer.</div>`;
-    document.getElementById('cartTotal').innerText = formatPrice(0);
-    updateCartBadge();
-    return;
-  }
+function buyAll(){ alert("Alle Produkte gekauft!"); cart=[]; updateCart(); closeCartPage(); }
 
-  // group by product id or show duplicates
-  // We'll render each item separately (duplicates allowed)
-  let total = 0;
-  CART.forEach((pid, idx)=>{
-    const p = PRODUCTS.find(x=>x.id===pid);
-    if(!p) return;
-    total += p.price;
-    const card = document.createElement('div');
-    card.className = 'cart-card';
-    // use same visual as shop card but with buy button
-    card.innerHTML = `
-      <div class="cart-card-inner" style="text-align:center;">
-        <img src="${p.images[0]}" alt="${escapeHtml(p.name)}" style="width:100%;height:170px;object-fit:cover;border-radius:6px;">
-        <div class="name" style="margin-top:8px;font-weight:700;">${escapeHtml(p.name)}</div>
-        <div class="preis" style="color:var(--green);font-weight:700;margin:6px 0;">${formatPrice(p.price)}</div>
-        <div><button class="btn" onclick="buySingle(${idx})">Jetzt kaufen</button></div>
-      </div>
-    `;
-    // wrapper class for layout matching shop
-    const wrapper = document.createElement('div');
-    wrapper.className = 'cart-card';
-    wrapper.appendChild(card.firstElementChild);
-    container.appendChild(wrapper);
+function searchProducts(){
+  let q=document.getElementById("searchBar").value.toLowerCase();
+  let c=document.getElementById("produkteContainer"); c.innerHTML="";
+  products.filter(p=>p.name.toLowerCase().includes(q)).forEach(p=>{
+    let d=document.createElement("div");
+    d.className="produkt";
+    d.innerHTML=`<img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
+    d.onclick=()=>openDetail(p);
+    c.appendChild(d);
   });
-
-  document.getElementById('cartTotal').innerText = formatPrice(total);
-  updateCartBadge();
 }
-
-/* buy single item from cart (index) */
-function buySingle(index){
-  const pid = CART[index];
-  const p = PRODUCTS.find(x=>x.id===pid);
-  if(!p) return;
-  // here you would connect to payment / mail / paypal etc.
-  alert(`Du hast ${p.name} gekauft!`);
-  CART.splice(index,1);
-  updateCartBadge();
-  renderCartPage();
-}
-
-/* buy all items */
-function buyAll(){
-  if(CART.length === 0){ alert('Dein Warenkorb ist leer.'); return; }
-  // simulate purchase
-  alert('Vielen Dank! Du hast alle Produkte gekauft.');
-  CART = [];
-  updateCartBadge();
-  renderCartPage();
-}
-
-/* -------------------------
-   DRAGGABLE CART BUTTON (nur seitlich, innerhalb Fenster)
-   ------------------------- */
-let cartDrag = { dragging:false, offsetX:0, offsetY:0 };
-const cartBtn = document.getElementById('cartBtn');
-cartBtn.addEventListener('mousedown', e=>{
-  // prevent click immediate open when starting drag
-  cartDrag.dragging = true;
-  cartDrag.offsetX = e.clientX - cartBtn.getBoundingClientRect().left;
-  cartDrag.offsetY = e.clientY - cartBtn.getBoundingClientRect().top;
-  document.addEventListener('mousemove', onCartDrag);
-  document.addEventListener('mouseup', onCartDrop);
-});
-function startDragCart(e){ /* for onclick race, we handle in mousedown above */ }
-function onCartDrag(e){
-  if(!cartDrag.dragging) return;
-  let x = e.clientX - cartDrag.offsetX;
-  // clamp
-  x = Math.max(6, Math.min(window.innerWidth - cartBtn.offsetWidth - 6, x));
-  // decide left or right docking depending on center
-  const center = x + cartBtn.offsetWidth/2;
-  if(center < window.innerWidth/2){
-    // dock left side at some px
-    cartBtn.style.left = (6) + 'px';
-    cartBtn.style.right = 'auto';
-  } else {
-    cartBtn.style.right = (6) + 'px';
-    cartBtn.style.left = 'auto';
-  }
-}
-function onCartDrop(){
-  if(!cartDrag.dragging) return;
-  cartDrag.dragging = false;
-  document.removeEventListener('mousemove', onCartDrag);
-  document.removeEventListener('mouseup', onCartDrop);
-}
-
-/* -------------------------
-   SEARCH & FILTER
-   ------------------------- */
-function filterProducts(){
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  if(!q){ renderShop(PRODUCTS); return; }
-  const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
-  renderShop(filtered);
-}
-
-/* -------------------------
-   LOGIN / REGISTER (simple demo)
-   ------------------------- */
-let USERS = []; // {email, pass}
-function showRegister(){ document.getElementById('startScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.remove('hidden'); }
-function showLogin(){ document.getElementById('startScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
-function enterShop(){ document.getElementById('startScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('shop').classList.remove('hidden'); }
-function registerUser(){
-  const email = document.getElementById('regEmail') ? document.getElementById('regEmail').value : document.getElementById('regEmail');
-  // quick demo: accept and go to shop
-  alert('Registrierung (Demo) abgeschlossen.');
-  enterShop();
-}
-function loginUser(){
-  alert('Anmeldung (Demo).');
-  enterShop();
-}
-
-/* -------------------------
-   UTIL
-   ------------------------- */
-function escapeHtml(s){
-  return (''+s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
-}
-
-/* -------------------------
-   INIT
-   ------------------------- */
-renderShop();
-updateCartBadge();
-
-/* Prevent accidental text selection while dragging */
-document.addEventListener('dragstart', e=>e.preventDefault());
 </script>
 </body>
 </html>
