@@ -5,47 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Shop</title>
 <style>
-  body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
-  #startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; }
-  .btn { padding:12px 25px; margin:10px; color:white; background:#28a745; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-  .btn:hover { background:#218838; }
-  .linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; margin-top:15px; display:inline-block; }
-  input { width:250px; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
-  .box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
+body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
+#startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; }
+.btn { padding:12px 25px; margin:10px; color:white; background:#28a745; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+.btn:hover { background:#218838; }
+.linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; margin-top:15px; display:inline-block; }
+input { width:250px; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
+.box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
 
-  /* Shop */
-  #shop { display:none; padding:20px; max-width:1200px; margin:auto; }
-  h1 { text-align:center; margin-bottom:20px; }
-  #searchBar { width:100%; max-width:400px; margin:0 auto 20px; display:flex; gap:10px; }
-  #searchInput { flex:1; padding:8px; border-radius:5px; border:1px solid #ccc; }
-  #searchButton { padding:8px 15px; border:none; border-radius:5px; background:#007bff; color:white; cursor:pointer; }
+/* Shop */
+#shop { display:none; padding:20px; max-width:1200px; margin:auto; }
+h1 { text-align:center; margin-bottom:20px; }
+.produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.produkt { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
+.produkt:hover { box-shadow:0 0 10px #888; }
+.produkt img { width:100%; border-radius:5px; }
+.name { font-weight:bold; margin:10px 0 5px; }
+.preis { color:green; font-size:1.2em; margin-bottom:10px; }
 
-  .produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-  .produkt { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; }
-  .produkt:hover { box-shadow:0 0 10px #888; }
-  .produkt img { width:100%; border-radius:5px; margin-bottom:5px; }
-  .name { font-weight:bold; margin:5px 0; text-align:left; }
-  .preis { color:green; font-size:1.2em; margin-bottom:5px; text-align:left; }
-  .produkt button { margin-top:auto; }
+/* Warenkorb */
+#cart { position:fixed; top:50%; transform:translateY(-50%); width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; transition:left 0.2s, right 0.2s; font-size:1.5em; }
+#cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
 
-  /* Warenkorb */
-  #cart { position:fixed; top:50%; transform:translateY(-50%); width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; transition:left 0.2s, right 0.2s; font-size:2em; }
-  #cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
+/* Detailansicht fullscreen */
+#productDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
+#productDetail h2 { text-align:center; }
+#productDetail .preis { font-size:1.5em; text-align:center; margin:10px 0; }
+#slideContainer { position:relative; overflow:hidden; width:100%; max-width:600px; margin:auto; }
+#slideInner { display:flex; transition:transform 0.5s ease; }
+#slideInner img { width:100%; flex-shrink:0; border-radius:8px; }
+.slideArrow { position:absolute; top:50%; transform:translateY(-50%); font-size:2em; background:rgba(0,0,0,0.2); color:white; padding:5px 10px; cursor:pointer; border-radius:5px; user-select:none; }
+#prevSlide { left:0; }
+#nextSlide { right:0; }
+#detailBuyBtn { display:block; margin:20px auto; padding:12px 25px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+#detailBuyBtn:hover { background:#218838; }
+#backBtn { position:absolute; top:20px; right:20px; padding:10px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; }
+#backBtn:hover { background:#0056b3; }
+#detailName { position:absolute; top:20px; left:20px; font-size:1.2em; font-weight:bold; }
 
-  /* Detailansicht fullscreen */
-  #productDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
-  #productDetail .detailHeader { display:flex; justify-content:space-between; align-items:center; }
-  #productDetail .detailHeader h2 { margin:0; }
-  #productDetail .slideContainer { position:relative; width:100%; max-width:600px; margin:20px auto; overflow:hidden; border-radius:8px; }
-  #slideInner { display:flex; transition: transform 0.5s ease; }
-  #slideInner img { width:100%; flex-shrink:0; border-radius:8px; }
-  .slideBtn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; font-size:2em; padding:5px 10px; cursor:pointer; border-radius:5px; }
-  .slideBtn:hover { background:rgba(0,0,0,0.8); }
-  #prevSlide { left:5px; }
-  #nextSlide { right:5px; }
-  #productDetail .preis { font-size:1.5em; text-align:center; margin:10px 0; }
-  #productDetail button { display:block; margin:20px auto; }
-  #productDetail .backBtn { cursor:pointer; color:#007bff; text-decoration:underline; }
+/* Warenkorb Seite */
+#cartPage { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:3000; overflow-y:auto; padding:20px; }
+#cartPage h2 { text-align:center; margin-bottom:20px; }
+.cartItems { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.cartItem { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; }
+.cartItem img { width:100%; border-radius:5px; }
+#continueShopping { display:block; margin:20px auto; padding:12px 25px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+#continueShopping:hover { background:#0056b3; }
+#buyAll { display:block; margin:10px auto; padding:12px 25px; background:orange; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+#buyAll:hover { background:#e69500; }
+#totalPrice { text-align:center; font-size:1.2em; margin:10px 0; }
+
+/* Suchleiste */
+#searchInput { width:100%; max-width:400px; padding:10px; margin:0 auto 20px; display:block; border:1px solid #ccc; border-radius:5px; }
+
 </style>
 </head>
 <body>
@@ -89,118 +101,78 @@
 <!-- Shop -->
 <div id="shop">
   <h1>Mein Shop</h1>
-  <div id="searchBar">
-    <input type="text" id="searchInput" placeholder="Suche...">
-    <button id="searchButton" onclick="searchProducts()">Suchen</button>
-  </div>
-  <div class="produkte" id="produkteContainer">
-    <!-- Produkte werden per JS geladen -->
-  </div>
+  <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Suche...">
+  <div class="produkte" id="produkteContainer"></div>
 </div>
 
-<!-- Warenkorb Fullscreen -->
-<div id="cartScreen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:3000; overflow-y:auto; padding:20px;">
-  <h2>Warenkorb</h2>
-  <div id="cartProducts" class="produkte"></div>
-  <div style="text-align:center; margin-top:20px;">
-    <div id="totalPrice" style="margin-bottom:10px; font-weight:bold;">Gesamt: 0 €</div>
-    <button class="btn" onclick="buyAll()">Alle kaufen</button>
-    <button class="btn" style="background:#007bff;" onclick="closeCart()">Weiter shoppen</button>
-  </div>
-</div>
-
-<!-- Detailansicht fullscreen -->
+<!-- Detailseite -->
 <div id="productDetail">
-  <div class="detailHeader">
-    <h2 id="detailName"></h2>
-    <div class="backBtn" onclick="closeDetail()">Zurück</div>
-  </div>
-  <div class="slideContainer">
+  <div id="detailName"></div>
+  <button id="backBtn" onclick="closeDetail()">Zurück</button>
+  <h2 id="detailTitle"></h2>
+  <div id="slideContainer">
     <div id="slideInner"></div>
-    <button class="slideBtn" id="prevSlide" onclick="prevSlide()">&#10094;</button>
-    <button class="slideBtn" id="nextSlide" onclick="nextSlide()">&#10095;</button>
+    <div class="slideArrow" id="prevSlide" onclick="prevSlide()">&#10094;</div>
+    <div class="slideArrow" id="nextSlide" onclick="nextSlide()">&#10095;</div>
   </div>
   <div class="preis" id="detailPrice"></div>
-  <button class="btn" id="detailBuyBtn" onclick="buyDetail()">Jetzt kaufen</button>
+  <button id="detailBuyBtn">In Warenkorb legen</button>
 </div>
 
-<!-- Warenkorb Emoji -->
-<div id="cart" onclick="openCart()">🛒<span id="cartCount">0</span></div>
+<!-- Warenkorb Seite -->
+<div id="cartPage">
+  <h2>Warenkorb</h2>
+  <div class="cartItems" id="cartItemsContainer"></div>
+  <div id="totalPrice"></div>
+  <button id="buyAll" onclick="buyAll()">Alle Produkte kaufen</button>
+  <button id="continueShopping" onclick="continueShopping()">Weiter shoppen</button>
+</div>
+
+<!-- Warenkorb Icon -->
+<div id="cart">🛒<span id="cartCount">0</span></div>
 
 <script>
-let products = [
-  {name:"Produkt 1", preis:29.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2","https://via.placeholder.com/600x400?text=Produkt+1+Bild+3"]},
-  {name:"Produkt 2", preis:19.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2","https://via.placeholder.com/600x400?text=Produkt+2+Bild+3"]},
-  {name:"Produkt 3", preis:39.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2","https://via.placeholder.com/600x400?text=Produkt+3+Bild+3"]},
-  {name:"Produkt 4", preis:59.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2","https://via.placeholder.com/600x400?text=Produkt+4+Bild+3"]},
-  {name:"Produkt 5", preis:49.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2","https://via.placeholder.com/600x400?text=Produkt+5+Bild+3"]},
-  {name:"Produkt 6", preis:24.99, bilder:["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2","https://via.placeholder.com/600x400?text=Produkt+6+Bild+3"]}
+// Produkte
+let products=[
+  {name:"Produkt 1",preis:29.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2","https://via.placeholder.com/600x400?text=Produkt+1+Bild+3"]},
+  {name:"Produkt 2",preis:19.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2","https://via.placeholder.com/600x400?text=Produkt+2+Bild+3"]},
+  {name:"Produkt 3",preis:39.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2","https://via.placeholder.com/600x400?text=Produkt+3+Bild+3"]},
+  {name:"Produkt 4",preis:59.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2","https://via.placeholder.com/600x400?text=Produkt+4+Bild+3"]},
+  {name:"Produkt 5",preis:49.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2","https://via.placeholder.com/600x400?text=Produkt+5+Bild+3"]},
+  {name:"Produkt 6",preis:24.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2","https://via.placeholder.com/600x400?text=Produkt+6+Bild+3"]}
 ];
 
-let cart = [];
-let currentProductIndex = 0;
-let currentSlide = 0;
+let cart=[];
+let currentProductIndex=0;
+let currentSlide=0;
 
-function showRegister(){document.getElementById("startScreen").style.display="none";document.getElementById("registerScreen").style.display="flex";}
-function showLogin(){document.getElementById("startScreen").style.display="none";document.getElementById("loginScreen").style.display="flex";}
-function enterShop(){document.getElementById("startScreen").style.display="none";document.getElementById("shop").style.display="block"; loadProducts();}
-function closeDetail(){document.getElementById("productDetail").style.display="none";}
-function openCart(){updateCart(); document.getElementById("cartScreen").style.display="block";}
-function closeCart(){document.getElementById("cartScreen").style.display="none";}
+function showRegister(){document.getElementById("startScreen").style.display="none";document.getElementById("loginScreen").style.display="none";document.getElementById("registerScreen").style.display="flex";}
+function showLogin(){document.getElementById("startScreen").style.display="none";document.getElementById("registerScreen").style.display="none";document.getElementById("loginScreen").style.display="flex";}
+function enterShop(){document.getElementById("startScreen").style.display="none";document.getElementById("shop").style.display="block"; renderProducts();}
 
-function loadProducts(){
-  let container = document.getElementById("produkteContainer");
-  container.innerHTML="";
-  products.forEach((p,i)=>{
-    let div=document.createElement("div");
-    div.className="produkt";
-    div.dataset.index=i;
-    div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div><button onclick="addToCart(${i}); event.stopPropagation()">In Warenkorb legen</button>`;
-    div.onclick=()=>showDetail(i);
-    container.appendChild(div);
-  });
-}
-
-function addToCart(i){cart.push(products[i]); updateCartCount();}
-function buyDetail(){cart.push(products[currentProductIndex]); updateCartCount(); alert("Produkt gekauft!"); closeDetail();}
-function buyAll(){if(cart.length===0){alert("Warenkorb leer"); return;} alert("Alle Produkte gekauft!"); cart=[]; updateCartCount(); closeCart();}
-
-function updateCartCount(){document.getElementById("cartCount").textContent=cart.length;}
-
-function updateCart(){
-  let container=document.getElementById("cartProducts");
-  container.innerHTML="";
-  let total=0;
-  if(cart.length===0){container.innerHTML="<p>Warenkorb leer</p>";document.getElementById("totalPrice").textContent="Gesamt: 0 €"; return;}
-  cart.forEach((p,i)=>{
-    total+=p.preis;
-    let div=document.createElement("div");
-    div.className="produkt";
-    div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div><button onclick="buySingle(${i})">Jetzt kaufen</button>`;
-    container.appendChild(div);
-  });
-  document.getElementById("totalPrice").textContent="Gesamt: "+total.toFixed(2)+" €";
-}
-
-function buySingle(i){alert(cart[i].name+" gekauft!"); cart.splice(i,1); updateCart(); updateCartCount();}
-
-function searchProducts(){
-  let term=document.getElementById("searchInput").value.toLowerCase();
+// Produkte rendern
+function renderProducts(){
   let container=document.getElementById("produkteContainer");
   container.innerHTML="";
   products.forEach((p,i)=>{
-    if(p.name.toLowerCase().includes(term)){
-      let div=document.createElement("div");
-      div.className="produkt";
-      div.dataset.index=i;
-      div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div><button onclick="addToCart(${i}); event.stopPropagation()">In Warenkorb legen</button>`;
-      div.onclick=()=>showDetail(i);
-      container.appendChild(div);
-    }
+    let div=document.createElement("div");
+    div.className="produkt";
+    div.onclick=function(){showDetail(i);};
+    div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
+    container.appendChild(div);
   });
 }
 
-// Slideshow Detailseite
+// Filter
+function filterProducts(){
+  let val=document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".produkt").forEach(p=>{
+    let name=p.querySelector(".name").textContent.toLowerCase();
+    p.style.display=name.includes(val)?"block":"none";
+  });
+}
+
+// Detailseite
 function showDetail(i){
   currentProductIndex=i;
   currentSlide=0;
@@ -208,6 +180,11 @@ function showDetail(i){
   document.getElementById("productDetail").style.display="block";
   document.getElementById("detailName").textContent=p.name;
   document.getElementById("detailPrice").textContent=p.preis.toFixed(2)+" €";
+
+  let detailBtn = document.getElementById("detailBuyBtn");
+  detailBtn.textContent="In Warenkorb legen";
+  detailBtn.onclick=function(){ addToCart(currentProductIndex); updateCartCount(); alert(p.name+" wurde zum Warenkorb hinzugefügt!");};
+
   let inner=document.getElementById("slideInner");
   inner.innerHTML="";
   inner.style.width=(p.bilder.length*100)+"%";
@@ -223,9 +200,77 @@ function showDetail(i){
   updateSlide();
 }
 
-function prevSlide(){if(currentSlide>0){currentSlide--; updateSlide();}}
-function nextSlide(){if(currentSlide<products[currentProductIndex].bilder.length-1){currentSlide++; updateSlide();}}
-function updateSlide(){document.getElementById("slideInner").style.transform=`translateX(-${(currentSlide*100)/products[currentProductIndex].bilder.length}%)`;}
+function closeDetail(){document.getElementById("productDetail").style.display="none";}
+
+function updateSlide(){document.getElementById("slideInner").style.transform="translateX("+(-currentSlide*100/products[currentProductIndex].bilder.length)+"%)";}
+function prevSlide(){currentSlide=(currentSlide-1+products[currentProductIndex].bilder.length)%products[currentProductIndex].bilder.length; updateSlide();}
+function nextSlide(){currentSlide=(currentSlide+1)%products[currentProductIndex].bilder.length; updateSlide();}
+
+// Warenkorb
+function addToCart(index){cart.push(products[index]); renderCart();}
+function updateCartCount(){document.getElementById("cartCount").textContent=cart.length;}
+document.getElementById("cart").onclick=function(){document.getElementById("cartPage").style.display="block"; renderCart();}
+function continueShopping(){document.getElementById("cartPage").style.display="none";}
+function renderCart(){
+  let container=document.getElementById("cartItemsContainer");
+  container.innerHTML="";
+  if(cart.length==0){container.innerHTML="<p>Warenkorb leer</p>";document.getElementById("totalPrice").textContent=""; return;}
+  let total=0;
+  cart.forEach((p,i)=>{
+    total+=p.preis;
+    let div=document.createElement("div");
+    div.className="cartItem";
+    div.innerHTML=`<img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
+    div.onclick=function(){showDetailInCart(i)};
+    container.appendChild(div);
+  });
+  document.getElementById("totalPrice").textContent="Gesamt: "+total.toFixed(2)+" €";
+}
+
+// Detailseite aus Warenkorb
+function showDetailInCart(i){
+  currentProductIndex=i;
+  currentSlide=0;
+  let p=cart[i];
+  document.getElementById("productDetail").style.display="block";
+  document.getElementById("detailName").textContent=p.name;
+  document.getElementById("detailPrice").textContent=p.preis.toFixed(2)+" €";
+  let detailBtn=document.getElementById("detailBuyBtn");
+  detailBtn.textContent="Jetzt kaufen";
+  detailBtn.onclick=function(){alert("Kauf von "+p.name+" abgeschlossen!"); cart.splice(i,1); renderCart(); updateCartCount(); closeDetail();};
+  let inner=document.getElementById("slideInner");
+  inner.innerHTML="";
+  inner.style.width=(p.bilder.length*100)+"%";
+  inner.style.display="flex";
+  inner.style.transition="transform 0.5s ease";
+  p.bilder.forEach(b=>{
+    let img=document.createElement("img");
+    img.src=b;
+    img.style.width=(100/p.bilder.length)+"%";
+    img.style.flexShrink="0";
+    inner.appendChild(img);
+  });
+  updateSlide();
+}
+
+// Alle kaufen
+function buyAll(){
+  if(cart.length==0){alert("Warenkorb leer"); return;}
+  alert("Kauf aller Produkte abgeschlossen!");
+  cart=[];
+  renderCart();
+  updateCartCount();
+}
+
+// Drag Warenkorb
+let cartDiv=document.getElementById("cart");
+let isDragging=false;
+let offsetX=0;
+cartDiv.onmousedown=function(e){isDragging=true; offsetX=e.clientX-cartDiv.offsetLeft; cartDiv.style.transition="none";}
+document.onmousemove=function(e){if(isDragging){let x=e.clientX-offsetX; x=Math.max(0,Math.min(window.innerWidth-60,x)); cartDiv.style.left=x+"px";}}
+document.onmouseup=function(){if(isDragging){isDragging=false; cartDiv.style.transition="left 0.2s"; let mid=window.innerWidth/2; cartDiv.style.left=(parseInt(cartDiv.style.left)+30<mid?0:(window.innerWidth-60))+"px";}}
+window.onload=renderProducts;
 </script>
+
 </body>
 </html>
