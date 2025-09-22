@@ -23,8 +23,8 @@ header h1 {margin:0;font-size:22px;}
 .detail-view {display:none;padding:30px;background:white;position:relative;}
 .detail-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
 .detail-header h2 {margin:0;}
-.detail-slider {position:relative;max-width:500px;margin:0 auto 20px;}
-.detail-slider img {width:100%;height:350px;object-fit:cover;border-radius:10px;transition:transform 0.5s;}
+.detail-slider {position:relative;max-width:500px;margin:0 auto 20px;overflow:hidden;}
+.detail-slider img {width:100%;height:350px;object-fit:cover;border-radius:10px;transition:transform 0.5s ease;}
 .slider-btn {position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:20px;padding:8px;border-radius:50%;cursor:pointer;}
 .slider-btn.left {left:10px;}
 .slider-btn.right {right:10px;}
@@ -80,13 +80,13 @@ header h1 {margin:0;font-size:22px;}
     <button class="slider-btn right" onclick="nextSlide()">›</button>
   </div>
   <p id="detailPrice"></p>
-  <button class="btn" onclick="addToCart(currentProduct)">In Warenkorb legen</button>
+  <button class="btn" onclick="addToCart(currentProduct.id)">In Warenkorb legen</button>
 </div>
 
 <!-- Warenkorb -->
 <div class="cart-page" id="cartPage">
   <h2>Dein Warenkorb</h2>
-  <input type="text" id="cartSearch" placeholder="Warenkorb durchsuchen..." oninput="searchCart(this.value)" style="width:100%;padding:8px;border-radius:12px;border:1px solid #ccc;margin-bottom:15px;">
+  <input type="text" id="cartSearch" placeholder="Warenkorb durchsuchen..." oninput="renderCart()" style="width:100%;padding:8px;border-radius:12px;border:1px solid #ccc;margin-bottom:15px;">
   <div id="cartItems"></div>
   <div class="cart-summary">
     <button class="btn" onclick="buyAll()">Alle kaufen</button>
@@ -156,24 +156,26 @@ function closeDetail(){
 function nextSlide(){
   if(!currentProduct) return;
   currentSlide=(currentSlide+1)%currentProduct.images.length;
-  document.getElementById("detailImage").src=currentProduct.images[currentSlide];
+  document.getElementById("detailImage").style.transform="translateX(100%)";
+  setTimeout(()=>{document.getElementById("detailImage").src=currentProduct.images[currentSlide];document.getElementById("detailImage").style.transform="translateX(0)";},100);
 }
+
 function prevSlide(){
   if(!currentProduct) return;
   currentSlide=(currentSlide-1+currentProduct.images.length)%currentProduct.images.length;
-  document.getElementById("detailImage").src=currentProduct.images[currentSlide];
+  document.getElementById("detailImage").style.transform="translateX(-100%)";
+  setTimeout(()=>{document.getElementById("detailImage").src=currentProduct.images[currentSlide];document.getElementById("detailImage").style.transform="translateX(0)";},100);
 }
 
 function addToCart(id){
   const prod=products.find(p=>p.id===id);
   cart.push(prod);
   updateCart();
+  if(inCartView) renderCart();
   alert(prod.name+" wurde in den Warenkorb gelegt!");
 }
 
-function updateCart(){
-  document.getElementById("cartCount").innerText=cart.length;
-}
+function updateCart(){document.getElementById("cartCount").innerText=cart.length;}
 
 function openCart(){
   inCartView=true;
@@ -210,9 +212,7 @@ function renderCart(){
 function removeFromCart(i){cart.splice(i,1); renderCart(); updateCart();}
 function buyAll(){if(cart.length==0){alert("Warenkorb leer");return;} alert("Kauf abgeschlossen!"); cart=[]; renderCart(); updateCart();}
 function clearCart(){cart=[]; renderCart(); updateCart();}
-
-function searchCart(value){renderCart();}
-function headerSearchFunc(value){if(inCartView){searchCart(value);} else {renderProducts(); const val=value.toLowerCase(); document.querySelectorAll(".product").forEach(p=>{let name=p.querySelector("h3").innerText.toLowerCase(); p.style.display=name.includes(val)?"flex":"none";});}}
+function headerSearchFunc(value){if(inCartView){renderCart();} else {renderProducts(); const val=value.toLowerCase(); document.querySelectorAll(".product").forEach(p=>{let name=p.querySelector("h3").innerText.toLowerCase(); p.style.display=name.includes(val)?"flex":"none";});}}
 </script>
 </body>
 </html>
