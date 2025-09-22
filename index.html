@@ -49,6 +49,9 @@ h1 { text-align:center; margin-bottom:20px; }
 .cartItems { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
 .cartItem { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; }
 .cartItem img { width:100%; border-radius:5px; }
+.removeBtn { margin-top:5px; font-size:0.9em; color:#666; background:#eee; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; }
+.removeBtn:hover { background:#ddd; }
+
 #continueShopping { display:block; margin:20px auto; padding:12px 25px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
 #continueShopping:hover { background:#0056b3; }
 #buyAll { display:block; margin:10px auto; padding:12px 25px; background:orange; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
@@ -220,37 +223,21 @@ function renderCart(){
     total+=p.preis;
     let div=document.createElement("div");
     div.className="cartItem";
-    div.innerHTML=`<img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
-    div.onclick=function(){showDetailInCart(i)};
+    div.innerHTML=`
+      <img src="${p.bilder[0]}">
+      <div class="name">${p.name}</div>
+      <div class="preis">${p.preis.toFixed(2)} €</div>
+      <button class="removeBtn" onclick="removeFromCart(${i})">Aus Warenkorb entfernen</button>
+    `;
     container.appendChild(div);
   });
   document.getElementById("totalPrice").textContent="Gesamt: "+total.toFixed(2)+" €";
 }
 
-// Detailseite aus Warenkorb
-function showDetailInCart(i){
-  currentProductIndex=i;
-  currentSlide=0;
-  let p=cart[i];
-  document.getElementById("productDetail").style.display="block";
-  document.getElementById("detailName").textContent=p.name;
-  document.getElementById("detailPrice").textContent=p.preis.toFixed(2)+" €";
-  let detailBtn=document.getElementById("detailBuyBtn");
-  detailBtn.textContent="Jetzt kaufen";
-  detailBtn.onclick=function(){alert("Kauf von "+p.name+" abgeschlossen!"); cart.splice(i,1); renderCart(); updateCartCount(); closeDetail();};
-  let inner=document.getElementById("slideInner");
-  inner.innerHTML="";
-  inner.style.width=(p.bilder.length*100)+"%";
-  inner.style.display="flex";
-  inner.style.transition="transform 0.5s ease";
-  p.bilder.forEach(b=>{
-    let img=document.createElement("img");
-    img.src=b;
-    img.style.width=(100/p.bilder.length)+"%";
-    img.style.flexShrink="0";
-    inner.appendChild(img);
-  });
-  updateSlide();
+function removeFromCart(i){
+  cart.splice(i,1);
+  renderCart();
+  updateCartCount();
 }
 
 // Alle kaufen
