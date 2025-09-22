@@ -1,245 +1,440 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mein Shop</title>
-<style>
-body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
-#startScreen, #loginScreen, #registerScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; }
-.btn { padding:12px 25px; margin:10px; color:white; background:#28a745; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-.btn:hover { background:#218838; }
-.linkBlue { color:#007bff; cursor:pointer; text-decoration:underline; margin-top:15px; display:inline-block; }
-input { width:250px; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
-.box { background:white; padding:20px; border-radius:8px; border:1px solid #ccc; margin:10px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Shop</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+    }
 
-/* Shop */
-#shop { display:none; padding:20px; max-width:1200px; margin:auto; }
-h1 { text-align:center; margin-bottom:20px; }
-.produkte { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-.produkt { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; cursor:pointer; transition:0.3s; }
-.produkt:hover { box-shadow:0 0 10px #888; }
-.produkt img { width:100%; border-radius:5px; }
-.name { font-weight:bold; margin:10px 0 5px; }
-.preis { color:green; font-size:1.2em; margin-bottom:10px; }
+    header {
+      background: #ff6600;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-/* Warenkorb */
-#cart { position:fixed; top:50%; transform:translateY(-50%); width:60px; height:60px; background:white; border-radius:50%; border:3px solid orange; display:flex; align-items:center; justify-content:center; cursor:grab; z-index:1000; transition:left 0.2s, right 0.2s; font-size:1.5em; display:none; }
-#cart span { position:absolute; top:-5px; right:-5px; background:orange; color:white; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8em; }
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
 
-/* Detailansicht fullscreen */
-#productDetail { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px; }
-#productDetail h2 { text-align:center; }
-#productDetail .preis { font-size:1.5em; text-align:center; margin:10px 0; }
-#slideContainer { position:relative; overflow:hidden; width:100%; max-width:600px; margin:auto; }
-#slideInner { display:flex; transition:transform 0.5s ease; }
-#slideInner img { width:100%; flex-shrink:0; border-radius:8px; }
-.slideArrow { position:absolute; top:50%; transform:translateY(-50%); font-size:2em; background:rgba(0,0,0,0.2); color:white; padding:5px 10px; cursor:pointer; border-radius:5px; user-select:none; }
-#prevSlide { left:0; }
-#nextSlide { right:0; }
-#detailBuyBtn { display:block; margin:20px auto; padding:12px 25px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-#detailBuyBtn:hover { background:#218838; }
-#backBtn { position:absolute; top:20px; right:20px; padding:10px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; }
-#backBtn:hover { background:#0056b3; }
-#detailName { position:absolute; top:20px; left:20px; font-size:1.2em; font-weight:bold; }
+    .search-bar {
+      flex: 1;
+      margin: 0 20px;
+    }
 
-/* Warenkorb Seite */
-#cartPage { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:3000; overflow-y:auto; padding:20px; }
-#cartPage h2 { text-align:center; margin-bottom:20px; }
-.cartItems { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-.cartItem { border:1px solid #ccc; border-radius:8px; width:30%; padding:10px; text-align:center; background:white; }
-.cartItem img { width:100%; border-radius:5px; }
-.removeBtn { font-size:0.9em; color:gray; cursor:pointer; margin-top:5px; }
-#continueShopping { display:block; margin:20px auto; padding:12px 25px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-#continueShopping:hover { background:#0056b3; }
-#buyAll { display:block; margin:10px auto; padding:12px 25px; background:orange; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
-#buyAll:hover { background:#e69500; }
-#totalPrice { text-align:center; font-size:1.2em; margin:10px 0; }
+    .search-bar input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: none;
+      font-size: 14px;
+    }
 
-/* Suchleiste */
-#searchInput { width:100%; max-width:400px; padding:10px; margin:0 auto 20px; display:block; border:1px solid #ccc; border-radius:5px; }
-</style>
+    .cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border: 3px solid orange;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .cart span {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: orange;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 4px 7px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+
+    .product:hover {
+      transform: translateY(-5px);
+    }
+
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-info h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #444;
+    }
+
+    .product-info p {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: #666;
+    }
+
+    .btn {
+      background: orange;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #e65c00;
+    }
+
+    /* Detailseite */
+    .detail-view {
+      display: none;
+      padding: 30px;
+      background: white;
+    }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .detail-header h2 {
+      margin: 0;
+    }
+
+    .detail-slider {
+      position: relative;
+      max-width: 500px;
+      margin: 0 auto 20px;
+    }
+
+    .detail-slider img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider-btn.left {
+      left: 10px;
+    }
+
+    .slider-btn.right {
+      right: 10px;
+    }
+
+    .cart-page {
+      display: none;
+      padding: 20px;
+    }
+
+    .cart-item {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .cart-item h3 {
+      margin: 0 0 8px;
+    }
+
+    .remove-btn {
+      font-size: 13px;
+      color: gray;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .cart-summary {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .cart-summary button {
+      margin-top: 10px;
+    }
+
+    /* Login/Registrieren */
+    .auth-container {
+      display: none;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f2f2f2;
+    }
+
+    .auth-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+
+    .auth-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .auth-box button {
+      width: 100%;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Startbildschirm -->
-<div id="startScreen">
-  <h1>Willkommen!</h1>
-  <div>Bist du zum ersten Mal hier?</div>
-  <button class="btn" onclick="showRegister()">Registrieren</button>
-  <div>Du hast bereits ein Konto?</div>
-  <button class="btn" onclick="showLogin()">Anmelden</button>
-  <div class="linkBlue" onclick="enterShop()">Ohne Anmeldung fortfahren</div>
-</div>
-
-<!-- Registrieren -->
-<div id="registerScreen" style="display:none;">
-  <h2>Registrieren</h2>
-  <div class="box">
-    <input type="text" id="regVorname" placeholder="Vorname"><br>
-    <input type="text" id="regNachname" placeholder="Nachname"><br>
-    <input type="text" id="regAdresse" placeholder="Straße, Hausnummer, PLZ"><br>
-    <input type="email" id="regEmail" placeholder="Email-Adresse"><br>
-    <input type="password" id="regPass" placeholder="Passwort"><br>
-    <input type="password" id="regPass2" placeholder="Passwort wiederholen"><br>
-    <button class="btn" onclick="registerUser()">Registrieren</button>
-    <div class="linkBlue" onclick="showLogin()">Bereits ein Konto? Anmelden</div>
+  <!-- Login -->
+  <div class="auth-container" id="authScreen">
+    <div class="auth-box">
+      <h2>Anmelden</h2>
+      <input type="text" placeholder="Benutzername">
+      <input type="password" placeholder="Passwort">
+      <button class="btn" onclick="login()">Login</button>
+      <button class="btn" style="background:#ccc;color:#333;" onclick="skipLogin()">Ohne Anmeldung fortfahren</button>
+    </div>
   </div>
-</div>
 
-<!-- Anmelden -->
-<div id="loginScreen" style="display:none;">
-  <h2>Anmelden</h2>
-  <div class="box">
-    <input type="email" id="loginEmail" placeholder="Email-Adresse"><br>
-    <input type="password" id="loginPass" placeholder="Passwort"><br>
-    <button class="btn" onclick="loginUser()">Anmelden</button>
-    <div class="linkBlue" onclick="showRegister()">Noch kein Konto? Registrieren</div>
+  <!-- Header -->
+  <header id="mainHeader" style="display:none;">
+    <h1>Mein Shop</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Produkte suchen..." oninput="searchProducts(this.value)">
+    </div>
+  </header>
+
+  <!-- Produktübersicht -->
+  <div class="products" id="productList" style="display:none;">
+    <div class="product" onclick="openDetail(1)">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
+      <div class="product-info">
+        <h3>Produkt 1</h3>
+        <p>19,99 €</p>
+        <button class="btn">In Warenkorb</button>
+      </div>
+    </div>
+    <div class="product" onclick="openDetail(2)">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
+      <div class="product-info">
+        <h3>Produkt 2</h3>
+        <p>29,99 €</p>
+        <button class="btn">In Warenkorb</button>
+      </div>
+    </div>
+    <div class="product" onclick="openDetail(3)">
+      <img src="https://via.placeholder.com/300x200?text=Produkt+3" alt="Produkt 3">
+      <div class="product-info">
+        <h3>Produkt 3</h3>
+        <p>39,99 €</p>
+        <button class="btn">In Warenkorb</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- Shop -->
-<div id="shop">
-  <h1>Mein Shop</h1>
-  <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Suche...">
-  <div class="produkte" id="produkteContainer"></div>
-</div>
-
-<!-- Detailseite -->
-<div id="productDetail">
-  <div id="detailName"></div>
-  <button id="backBtn" onclick="closeDetail()">Zurück</button>
-  <h2 id="detailTitle"></h2>
-  <div id="slideContainer">
-    <div id="slideInner"></div>
-    <div class="slideArrow" id="prevSlide" onclick="prevSlide()">&#10094;</div>
-    <div class="slideArrow" id="nextSlide" onclick="nextSlide()">&#10095;</div>
+  <!-- Detailseite -->
+  <div class="detail-view" id="detailView">
+    <div class="detail-header">
+      <h2 id="detailTitle">Produkt</h2>
+      <button class="btn" onclick="closeDetail()">Zurück</button>
+    </div>
+    <div class="detail-slider">
+      <button class="slider-btn left" onclick="prevSlide()">‹</button>
+      <img id="detailImage" src="" alt="Detail Bild">
+      <button class="slider-btn right" onclick="nextSlide()">›</button>
+    </div>
+    <p id="detailPrice"></p>
+    <button class="btn" onclick="addToCart(currentProduct)">In Warenkorb legen</button>
   </div>
-  <div class="preis" id="detailPrice"></div>
-  <button id="detailBuyBtn">In Warenkorb legen</button>
-</div>
 
-<!-- Warenkorb Seite -->
-<div id="cartPage">
-  <h2>Warenkorb</h2>
-  <div class="cartItems" id="cartItemsContainer"></div>
-  <div id="totalPrice"></div>
-  <button id="buyAll" onclick="buyAll()">Alle Produkte kaufen</button>
-  <button id="continueShopping" onclick="continueShopping()">Weiter shoppen</button>
-</div>
+  <!-- Warenkorb -->
+  <div class="cart-page" id="cartPage">
+    <h2>Dein Warenkorb</h2>
+    <div id="cartItems"></div>
+    <div class="cart-summary">
+      <p id="cartTotal">Gesamt: 0 €</p>
+      <button class="btn">Alle Produkte kaufen</button>
+      <button class="btn" style="background:#ccc;color:#333;" onclick="backToShop()">Weiter shoppen</button>
+    </div>
+  </div>
 
-<!-- Warenkorb Icon -->
-<div id="cart">🛒<span id="cartCount">0</span></div>
+  <!-- Warenkorb Button -->
+  <div class="cart" id="cartIcon" onclick="openCart()" style="display:none;">
+    🛒
+    <span id="cartCount">0</span>
+  </div>
 
-<script>
-let products=[
-  {name:"Produkt 1",preis:29.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+1+Bild+1","https://via.placeholder.com/600x400?text=Produkt+1+Bild+2","https://via.placeholder.com/600x400?text=Produkt+1+Bild+3"]},
-  {name:"Produkt 2",preis:19.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+2+Bild+1","https://via.placeholder.com/600x400?text=Produkt+2+Bild+2","https://via.placeholder.com/600x400?text=Produkt+2+Bild+3"]},
-  {name:"Produkt 3",preis:39.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+3+Bild+1","https://via.placeholder.com/600x400?text=Produkt+3+Bild+2","https://via.placeholder.com/600x400?text=Produkt+3+Bild+3"]},
-  {name:"Produkt 4",preis:59.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+4+Bild+1","https://via.placeholder.com/600x400?text=Produkt+4+Bild+2","https://via.placeholder.com/600x400?text=Produkt+4+Bild+3"]},
-  {name:"Produkt 5",preis:49.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+5+Bild+1","https://via.placeholder.com/600x400?text=Produkt+5+Bild+2","https://via.placeholder.com/600x400?text=Produkt+5+Bild+3"]},
-  {name:"Produkt 6",preis:24.99,bilder:["https://via.placeholder.com/600x400?text=Produkt+6+Bild+1","https://via.placeholder.com/600x400?text=Produkt+6+Bild+2","https://via.placeholder.com/600x400?text=Produkt+6+Bild+3"]}
-];
-let cart=[];
-let currentProductIndex=0;
-let currentSlide=0;
+  <script>
+    let loggedIn = false;
+    let cart = [];
+    let currentProduct = null;
+    let currentSlide = 0;
+    const products = [
+      {id:1, name:"Produkt 1", price:19.99, images:["https://via.placeholder.com/500x350?text=Produkt+1-1","https://via.placeholder.com/500x350?text=Produkt+1-2"]},
+      {id:2, name:"Produkt 2", price:29.99, images:["https://via.placeholder.com/500x350?text=Produkt+2-1","https://via.placeholder.com/500x350?text=Produkt+2-2"]},
+      {id:3, name:"Produkt 3", price:39.99, images:["https://via.placeholder.com/500x350?text=Produkt+3-1","https://via.placeholder.com/500x350?text=Produkt+3-2"]}
+    ];
 
-function showRegister(){document.getElementById("startScreen").style.display="none";document.getElementById("loginScreen").style.display="none";document.getElementById("registerScreen").style.display="flex";}
-function showLogin(){document.getElementById("startScreen").style.display="none";document.getElementById("registerScreen").style.display="none";document.getElementById("loginScreen").style.display="flex";}
-function enterShop(){
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("shop").style.display="block"; 
-  document.getElementById("cart").style.display="flex"; // Warenkorb erst hier sichtbar
-  renderProducts();
-}
+    function login(){
+      loggedIn = true;
+      document.getElementById("authScreen").style.display="none";
+      document.getElementById("mainHeader").style.display="flex";
+      document.getElementById("productList").style.display="grid";
+      document.getElementById("cartIcon").style.display="flex";
+    }
 
-// Produkte rendern
-function renderProducts(){
-  let container=document.getElementById("produkteContainer");
-  container.innerHTML="";
-  products.forEach((p,i)=>{
-    let div=document.createElement("div");
-    div.className="produkt";
-    div.onclick=function(){showDetail(i);};
-    div.innerHTML=`<img src="${p.bilder[0]}" alt="${p.name}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div>`;
-    container.appendChild(div);
-  });
-}
+    function skipLogin(){
+      login();
+    }
 
-// Filter
-function filterProducts(){
-  let val=document.getElementById("searchInput").value.toLowerCase();
-  document.querySelectorAll(".produkt").forEach(p=>{
-    let name=p.querySelector(".name").textContent.toLowerCase();
-    p.style.display=name.includes(val)?"block":"none";
-  });
-}
+    function searchProducts(value){
+      value = value.toLowerCase();
+      document.querySelectorAll(".product").forEach(p=>{
+        let name = p.querySelector("h3").innerText.toLowerCase();
+        p.style.display = name.includes(value) ? "flex" : "none";
+      });
+    }
 
-// Detailseite
-function showDetail(i){
-  currentProductIndex=i;
-  currentSlide=0;
-  let p=products[i];
-  document.getElementById("productDetail").style.display="block";
-  document.getElementById("detailName").textContent=p.name;
-  document.getElementById("detailPrice").textContent=p.preis.toFixed(2)+" €";
-  let detailBtn = document.getElementById("detailBuyBtn");
-  detailBtn.textContent="In Warenkorb legen";
-  detailBtn.onclick=function(){ addToCart(currentProductIndex); updateCartCount(); alert(p.name+" wurde zum Warenkorb hinzugefügt!");};
-  let inner=document.getElementById("slideInner");
-  inner.innerHTML="";
-  inner.style.width=(p.bilder.length*100)+"%";
-  inner.style.display="flex";
-  inner.style.transition="transform 0.5s ease";
-  p.bilder.forEach(b=>{
-    let img=document.createElement("img");
-    img.src=b;
-    img.style.width=(100/p.bilder.length)+"%";
-    img.style.flexShrink="0";
-    inner.appendChild(img);
-  });
-  updateSlide();
-}
-function closeDetail(){document.getElementById("productDetail").style.display="none";}
-function updateSlide(){document.getElementById("slideInner").style.transform="translateX("+(-currentSlide*100/products[currentProductIndex].bilder.length)+"%)";}
-function prevSlide(){currentSlide=(currentSlide-1+products[currentProductIndex].bilder.length)%products[currentProductIndex].bilder.length; updateSlide();}
-function nextSlide(){currentSlide=(currentSlide+1)%products[currentProductIndex].bilder.length; updateSlide();}
+    function openDetail(id){
+      const product = products.find(p=>p.id===id);
+      currentProduct = product;
+      currentSlide = 0;
+      document.getElementById("detailTitle").innerText = product.name;
+      document.getElementById("detailImage").src = product.images[0];
+      document.getElementById("detailPrice").innerText = product.price.toFixed(2)+" €";
+      document.getElementById("productList").style.display="none";
+      document.getElementById("detailView").style.display="block";
+    }
 
-// Warenkorb
-function addToCart(index){cart.push(products[index]); renderCart();}
-function updateCartCount(){document.getElementById("cartCount").textContent=cart.length;}
-document.getElementById("cart").onclick=function(){document.getElementById("cartPage").style.display="block"; renderCart();}
-function continueShopping(){document.getElementById("cartPage").style.display="none";}
-function renderCart(){
-  let container=document.getElementById("cartItemsContainer");
-  container.innerHTML="";
-  if(cart.length==0){container.innerHTML="<p>Warenkorb leer</p>";document.getElementById("totalPrice").textContent=""; return;}
-  let total=0;
-  cart.forEach((p,i)=>{
-    total+=p.preis;
-    let div=document.createElement("div");
-    div.className="cartItem";
-    div.innerHTML=`<img src="${p.bilder[0]}"><div class="name">${p.name}</div><div class="preis">${p.preis.toFixed(2)} €</div><div class="removeBtn" onclick="removeFromCart(${i})">Aus Warenkorb entfernen</div>`;
-    container.appendChild(div);
-  });
-  document.getElementById("totalPrice").textContent="Gesamt: "+total.toFixed(2)+" €";
-}
-function removeFromCart(i){cart.splice(i,1); renderCart(); updateCartCount();}
+    function closeDetail(){
+      document.getElementById("detailView").style.display="none";
+      document.getElementById("productList").style.display="grid";
+    }
 
-// Alle kaufen
-function buyAll(){
-  if(cart.length==0){alert("Warenkorb leer"); return;}
-  alert("Kauf aller Produkte abgeschlossen!");
-  cart=[]; renderCart(); updateCartCount();
-}
+    function nextSlide(){
+      if(!currentProduct) return;
+      currentSlide = (currentSlide+1) % currentProduct.images.length;
+      document.getElementById("detailImage").src = currentProduct.images[currentSlide];
+    }
 
-// Drag Warenkorb
-let cartDiv=document.getElementById("cart");
-let isDragging=false; let offsetX=0;
-cartDiv.onmousedown=function(e){isDragging=true; offsetX=e.clientX-cartDiv.offsetLeft; cartDiv.style.transition="none";}
-document.onmousemove=function(e){if(isDragging){let x=e.clientX-offsetX; x=Math.max(0,Math.min(window.innerWidth-60,x)); cartDiv.style.left=x+"px";}}
-document.onmouseup=function(){if(isDragging){isDragging=false; cartDiv.style.transition="left 0.2s"; let mid=window.innerWidth/2; cartDiv.style.left=(parseInt(cartDiv.style.left)+30<mid?0:(window.innerWidth-60))+"px";}}
-window.onload=renderProducts;
-</script>
+    function prevSlide(){
+      if(!currentProduct) return;
+      currentSlide = (currentSlide-1+currentProduct.images.length)%currentProduct.images.length;
+      document.getElementById("detailImage").src = currentProduct.images[currentSlide];
+    }
+
+    function addToCart(product){
+      cart.push(product);
+      updateCart();
+      alert(product.name+" wurde in den Warenkorb gelegt!");
+    }
+
+    function updateCart(){
+      document.getElementById("cartCount").innerText = cart.length;
+    }
+
+    function openCart(){
+      document.getElementById("productList").style.display="none";
+      document.getElementById("detailView").style.display="none";
+      document.getElementById("cartPage").style.display="block";
+
+      let itemsHTML="";
+      let total=0;
+      cart.forEach((item,index)=>{
+        itemsHTML+=`
+          <div class="cart-item">
+            <h3>${item.name}</h3>
+            <p>${item.price.toFixed(2)} €</p>
+            <button class="remove-btn" onclick="removeFromCart(${index})">aus Warenkorb entfernen</button>
+          </div>
+        `;
+        total+=item.price;
+      });
+      document.getElementById("cartItems").innerHTML=itemsHTML || "<p>Warenkorb leer</p>";
+      document.getElementById("cartTotal").innerText="Gesamt: "+total.toFixed(2)+" €";
+    }
+
+    function removeFromCart(index){
+      cart.splice(index,1);
+      openCart();
+      updateCart();
+    }
+
+    function backToShop(){
+      document.getElementById("cartPage").style.display="none";
+      document.getElementById("productList").style.display="grid";
+    }
+  </script>
 </body>
 </html>
