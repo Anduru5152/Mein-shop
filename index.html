@@ -6,11 +6,11 @@
 <title>Mein Shop</title>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f9f9f9;color:#333;}
-header{background:#ff6600;color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;}
+header{background:#ff6600;color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:relative;}
 header h1{margin:0;font-size:22px;}
 .search-bar{flex:1;margin:0 20px;}
 .search-bar input{width:100%;padding:8px 12px;border-radius:20px;border:none;font-size:14px;}
-.cart{position:fixed;top:20px;right:20px;background:white;border:3px solid orange;border-radius:50%;width:60px;height:60px;display:flex;justify-content:center;align-items:center;font-size:26px;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.15);z-index:1000;}
+.cart{position:absolute;top:50%;right:20px;transform:translateY(-50%);background:white;border:3px solid orange;border-radius:50%;width:60px;height:60px;display:flex;justify-content:center;align-items:center;font-size:26px;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.15);z-index:1000;}
 .cart span{position:absolute;top:-5px;right:-5px;background:orange;color:white;font-size:13px;font-weight:bold;border-radius:50%;padding:4px 7px;}
 .products{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:20px;}
 .product{background:white;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.1);overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s;cursor:pointer;}
@@ -24,11 +24,11 @@ header h1{margin:0;font-size:22px;}
 .detail-view{display:none;padding:30px;background:white;position:fixed;top:0;left:0;width:100%;height:100%;overflow-y:auto;z-index:999;}
 .detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
 .detail-header h2{margin:0;}
-.detail-slider{position:relative;max-width:500px;margin:0 auto 20px;overflow:hidden;}
-.detail-slider img{width:100%;height:350px;object-fit:cover;border-radius:10px;transition:transform 0.5s ease;}
+.detail-slider{position:relative;max-width:500px;margin:0 auto 20px;overflow:hidden;border-radius:10px;}
+.detail-slider img{width:100%;height:350px;object-fit:cover;transition:opacity 0.5s ease;}
 .slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:white;border:none;font-size:20px;padding:8px;border-radius:50%;cursor:pointer;}
 .slider-btn.left{left:10px;}
-slider-btn.right{right:10px;}
+.slider-btn.right{right:10px;}
 .cart-page{display:none;padding:20px;}
 .cart-item{background:white;border-radius:10px;padding:15px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
 .cart-item h3{margin:0 0 8px;}
@@ -36,7 +36,7 @@ slider-btn.right{right:10px;}
 .cart-summary{text-align:right;margin-top:20px;}
 .cart-summary button{margin-top:10px;}
 .auth-container{display:flex;height:100vh;justify-content:center;align-items:center;background:#f2f2f2;position:fixed;width:100%;top:0;left:0;z-index:1001;}
-.auth-box{background:white;padding:30px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);width:320px;text-align:center;margin:0 10px;}
+.auth-box{background:white;padding:30px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);width:320px;text-align:center;}
 .auth-box h2{margin-bottom:20px;}
 .auth-box input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;}
 .auth-box button{width:100%;margin-top:15px;}
@@ -44,25 +44,24 @@ slider-btn.right{right:10px;}
 </head>
 <body>
 
-<!-- Auth-Bereich -->
+<!-- Login & Registrieren -->
 <div class="auth-container" id="authScreen">
-  <!-- Registrieren -->
-  <div class="auth-box">
+  <div class="auth-box" id="loginBox">
+    <h2>Anmelden</h2>
+    <input type="text" placeholder="Benutzername" id="loginName">
+    <input type="password" placeholder="Passwort" id="loginPass">
+    <button class="btn" onclick="login()">Login</button>
+    <button class="btn" style="background:#ccc;color:#333;" onclick="showRegister()">Registrieren</button>
+    <button class="btn" style="background:#ccc;color:#333;" onclick="skipLogin()">Ohne Anmeldung fortfahren</button>
+  </div>
+  <div class="auth-box" id="registerBox" style="display:none;">
     <h2>Registrieren</h2>
     <input type="email" placeholder="Email" id="regEmail">
     <input type="text" placeholder="Benutzername" id="regName">
     <input type="password" placeholder="Passwort" id="regPass">
     <input type="password" placeholder="Passwort bestätigen" id="regPass2">
     <button class="btn" onclick="register()">Registrieren</button>
-  </div>
-
-  <!-- Login -->
-  <div class="auth-box">
-    <h2>Login</h2>
-    <input type="text" placeholder="Benutzername" id="loginName">
-    <input type="password" placeholder="Passwort" id="loginPass">
-    <button class="btn" onclick="login()">Login</button>
-    <button class="btn" style="background:#ccc;color:#333;" onclick="skipLogin()">Login Überspringen</button>
+    <button class="btn" style="background:#ccc;color:#333;" onclick="showLogin()">Zurück zum Login</button>
   </div>
 </div>
 
@@ -71,6 +70,9 @@ slider-btn.right{right:10px;}
   <h1>Mein Shop</h1>
   <div class="search-bar">
     <input type="text" id="headerSearch" placeholder="Produkte suchen..." oninput="searchProducts(this.value)">
+  </div>
+  <div class="cart" id="cartIcon" onclick="openCart()">
+    🛒<span id="cartCount">0</span>
   </div>
 </header>
 
@@ -104,19 +106,12 @@ slider-btn.right{right:10px;}
   </div>
 </div>
 
-<!-- Warenkorb Button -->
-<div class="cart" id="cartIcon" onclick="openCart()" style="display:none;">🛒<span id="cartCount">0</span></div>
-
 <script>
-// Global
 let loggedIn=false;
 let cart=[];
 let currentProduct=null;
 let currentSlide=0;
-let inCartView=false;
-
-// Produkte
-const products=[];
+let products=[];
 for(let i=0;i<10;i++){
   products.push({id:i+1,name:"Produkt "+(i+1),price:9.99+i*10,images:[
     "https://via.placeholder.com/500x350?text=Produkt+"+(i+1)+"-1",
@@ -124,29 +119,32 @@ for(let i=0;i<10;i++){
   ]});
 }
 
-// Login
-function login(){showShop();}
+// Login / Register
+function login(){
+  const name=document.getElementById("loginName").value.trim();
+  const pass=document.getElementById("loginPass").value.trim();
+  if(!name||!pass){alert("Bitte Benutzername und Passwort eingeben!"); return;}
+  showShop();
+}
 function skipLogin(){showShop();}
+function register(){
+  const email=document.getElementById("regEmail").value.trim();
+  const name=document.getElementById("regName").value.trim();
+  const pass=document.getElementById("regPass").value.trim();
+  const pass2=document.getElementById("regPass2").value.trim();
+  if(!email||!name||!pass||!pass2){alert("Alle Felder ausfüllen!"); return;}
+  if(pass!==pass2){alert("Passwörter stimmen nicht überein!"); return;}
+  alert("Registrierung abgeschlossen! Du kannst dich nun einloggen.");
+  showLogin();
+}
+function showRegister(){document.getElementById("loginBox").style.display="none";document.getElementById("registerBox").style.display="block";}
+function showLogin(){document.getElementById("loginBox").style.display="block";document.getElementById("registerBox").style.display="none";}
 function showShop(){
   loggedIn=true;
   document.getElementById("authScreen").style.display="none";
   document.getElementById("mainHeader").style.display="flex";
   document.getElementById("productList").style.display="grid";
-  document.getElementById("cartIcon").style.display="flex";
-  inCartView=false;
-  document.getElementById("headerSearch").placeholder="Produkte suchen...";
   renderProducts();
-}
-
-// Registrierung (nur Dummy)
-function register(){
-  const email=document.getElementById("regEmail").value;
-  const username=document.getElementById("regName").value;
-  const pass=document.getElementById("regPass").value;
-  const pass2=document.getElementById("regPass2").value;
-  if(!email||!username||!pass||!pass2){alert("Bitte alle Felder ausfüllen!");return;}
-  if(pass!==pass2){alert("Passwörter stimmen nicht überein!");return;}
-  alert("Registrierung erfolgreich! Bitte einloggen.");
 }
 
 // Render Produkte
@@ -156,74 +154,47 @@ function renderProducts(){
   products.forEach(p=>{
     const div=document.createElement("div");
     div.className="product";
-    div.innerHTML=`
-      <img src="${p.images[0]}" alt="${p.name}">
+    div.onclick=()=>openDetail(p.id);
+    div.innerHTML=`<img src="${p.images[0]}" alt="${p.name}">
       <div class="product-info">
         <h3>${p.name}</h3>
         <p>${p.price.toFixed(2)} €</p>
-        <button class="btn" onclick="addToCart(${p.id})">In Warenkorb</button>
-      </div>
-    `;
-    div.onclick=()=>openDetail(p.id);
+        <button class="btn" onclick="addToCartFromList(event, ${p.id})">In Warenkorb</button>
+      </div>`;
     container.appendChild(div);
   });
 }
 
 // Detailseite
 function openDetail(id){
-  const product=products.find(p=>p.id===id);
-  currentProduct=product;
+  currentProduct=products.find(p=>p.id===id);
   currentSlide=0;
-  document.getElementById("detailTitle").innerText=product.name;
-  document.getElementById("detailImage").src=product.images[0];
-  document.getElementById("detailPrice").innerText=product.price.toFixed(2)+" €";
+  const img=document.getElementById("detailImage");
+  img.style.opacity=0;
+  img.src=currentProduct.images[0];
+  setTimeout(()=>{img.style.opacity=1;},50);
+  document.getElementById("detailTitle").innerText=currentProduct.name;
+  document.getElementById("detailPrice").innerText=currentProduct.price.toFixed(2)+" €";
   document.getElementById("productList").style.display="none";
   document.getElementById("detailView").style.display="block";
 }
-function closeDetail(){
-  document.getElementById("detailView").style.display="none";
-  document.getElementById("productList").style.display="grid";
-}
-function nextSlide(){if(!currentProduct)return;currentSlide=(currentSlide+1)%currentProduct.images.length;document.getElementById("detailImage").src=currentProduct.images[currentSlide];}
-function prevSlide(){if(!currentProduct)return;currentSlide=(currentSlide-1+currentProduct.images.length)%currentProduct.images.length;document.getElementById("detailImage").src=currentProduct.images[currentSlide];}
+function closeDetail(){document.getElementById("detailView").style.display="none";document.getElementById("productList").style.display="grid";}
+function nextSlide(){if(!currentProduct) return; currentSlide=(currentSlide+1)%currentProduct.images.length; const img=document.getElementById("detailImage"); img.style.opacity=0; setTimeout(()=>{img.src=currentProduct.images[currentSlide]; img.style.opacity=1;},200);}
+function prevSlide(){if(!currentProduct) return; currentSlide=(currentSlide-1+currentProduct.images.length)%currentProduct.images.length; const img=document.getElementById("detailImage"); img.style.opacity=0; setTimeout(()=>{img.src=currentProduct.images[currentSlide]; img.style.opacity=1;},200);}
 
 // Warenkorb
-function addToCart(id){
-  const product=products.find(p=>p.id===id);
-  cart.push(product);
-  updateCart();
-}
+function addToCartFromList(e,id){e.stopPropagation(); const p=products.find(pr=>pr.id===id); addToCart(p);}
+function addToCart(p){cart.push(p); updateCart(); alert(p.name+" wurde in den Warenkorb gelegt!");}
 function updateCart(){document.getElementById("cartCount").innerText=cart.length;}
-function openCart(){renderCart();}
+function openCart(){document.getElementById("productList").style.display="none";document.getElementById("detailView").style.display="none";document.getElementById("cartPage").style.display="block";renderCart();}
 function backToShop(){document.getElementById("cartPage").style.display="none";document.getElementById("productList").style.display="grid";}
-function emptyCart(){cart=[];renderCart();}
-function renderCart(){
-  const container=document.getElementById("cartItems");
-  let html="";
-  let total=0;
-  cart.forEach((item,index)=>{
-    html+=`<div class="cart-item">
-      <h3>${item.name}</h3>
-      <p>${item.price.toFixed(2)} €</p>
-      <button class="remove-btn" onclick="removeFromCart(${index})">aus Warenkorb entfernen</button>
-    </div>`;
-    total+=item.price;
-  });
-  container.innerHTML=html||"<p>Warenkorb leer</p>";
-  document.getElementById("cartTotal").innerText="Gesamt: "+total.toFixed(2)+" €";
-  document.getElementById("cartPage").style.display="block";
-}
-function removeFromCart(index){cart.splice(index,1);renderCart();}
-function buyAll(){if(cart.length>0){alert("Vielen Dank für deinen Kauf!");emptyCart();}else{alert("Warenkorb ist leer!");}}
+function renderCart(){const container=document.getElementById("cartItems");container.innerHTML="";let total=0;if(cart.length===0){container.innerHTML="<p>Warenkorb leer</p>";} cart.forEach((item,index)=>{total+=item.price;const div=document.createElement("div");div.className="cart-item";div.innerHTML=`<h3>${item.name}</h3><p>${item.price.toFixed(2)} €</p><button class="remove-btn" onclick="removeFromCart(${index})">aus Warenkorb entfernen</button>`;container.appendChild(div);});document.getElementById("cartTotal").innerText="Gesamt: "+total.toFixed(2)+" €";}
+function removeFromCart(index){cart.splice(index,1); renderCart(); updateCart();}
+function emptyCart(){cart=[]; renderCart(); updateCart();}
+function buyAll(){if(cart.length===0){alert("Warenkorb leer!"); return;} alert("Vielen Dank für deinen Kauf!"); emptyCart();}
 
 // Suche
-function searchProducts(value){
-  value=value.toLowerCase();
-  document.querySelectorAll(".product").forEach(p=>{
-    let name=p.querySelector("h3").innerText.toLowerCase();
-    p.style.display=name.includes(value)?"flex":"none";
-  });
-}
+function searchProducts(value){value=value.toLowerCase();document.querySelectorAll(".product").forEach(p=>{let name=p.querySelector("h3").innerText.toLowerCase();p.style.display=name.includes(value)?"flex":"none";});}
 </script>
 </body>
 </html>
