@@ -1,1 +1,1 @@
-# Mein-shop
+# Anduru-store
