@@ -42,6 +42,26 @@
 </head>
 <body>
 
+<!-- Login -->
+<div id="loginPage">
+  <h2>Login</h2>
+  <input type="text" id="loginName" placeholder="Benutzername"><br><br>
+  <input type="password" id="loginPass" placeholder="Passwort"><br><br>
+  <button onclick="login()">Login</button>
+  <button onclick="skipLogin()">Überspringen</button>
+  <p id="loginError" style="color:red;"></p>
+</div>
+
+<!-- Shop -->
+<div id="shopPage">
+  <header>
+    <h1>Mein Shop</h1>
+    <div class="search-bar"><input type="text" id="searchInput" placeholder="Produkte durchsuchen..." onkeyup="searchProducts()"></div>
+    <div class="cart-icon" onclick="showCart()">🛒<div class="cart-count" id="cartCount">0</div></div>
+  </header>
+  <div class="products" id="productList"></div>
+</div>
+
 <!-- Produkt Detail -->
 <div id="productDetail">
   <header>
@@ -51,10 +71,62 @@
   <div class="slideshow-container" id="detailSlideshow"></div>
   <div class="description" id="detailDescription"></div>
   <p id="detailPrice"></p>
-  <button onclick="addToCart(currentDetail)">In Warenkorb legen</button>
+  <button onclick="buyDetail(currentDetail)">Jetzt kaufen</button>
+</div>
+
+<!-- Warenkorb -->
+<div id="cartPage">
+  <header>
+    <h1>Dein Warenkorb</h1>
+    <div class="search-bar"><input type="text" id="cartSearchInput" placeholder="Warenkorb durchsuchen..." onkeyup="searchCart()"></div>
+  </header>
+  <div id="cartItems"></div>
+  <p id="totalPrice">Gesamt: €0.00</p>
+  <div class="actions">
+    <button onclick="buyAll()">Alle kaufen</button>
+    <button onclick="clearCart()">Warenkorb leeren</button>
+    <button onclick="closeCart()">Weiter shoppen</button>
+  </div>
 </div>
 
 <script>
+  // Login
+  function login() {
+    const name = document.getElementById("loginName").value;
+    const pass = document.getElementById("loginPass").value;
+    if(name==="user" && pass==="1234"){
+      document.getElementById("loginPage").style.display="none";
+      document.getElementById("shopPage").style.display="block";
+    } else {
+      document.getElementById("loginError").innerText="Falsche Daten!";
+    }
+  }
+  function skipLogin(){document.getElementById("loginPage").style.display="none"; document.getElementById("shopPage").style.display="block";}
+
+  // Produkte
+  const products=[];
+  for(let i=1;i<=10;i++){
+    products.push({
+      id:i,
+      name:"Produkt "+i,
+      price:9.99+(i-1)*10,
+      images:[`https://via.placeholder.com/400x300?text=Produkt+${i}+Bild+1`,
+              `https://via.placeholder.com/400x300?text=Produkt+${i}+Bild+2`]
+    });
+  }
+
+  const productList=document.getElementById("productList");
+  products.forEach(p=>{
+    const div=document.createElement("div");
+    div.className="product";
+    div.innerHTML=`<img src="${p.images[0]}" onclick="openDetail(${p.id})">
+                   <h3>${p.name}</h3>
+                   <p>€${p.price.toFixed(2)}</p>
+                   <button onclick="addToCart(${p.id})">In Warenkorb</button>`;
+    productList.appendChild(div);
+  });
+
+  // Detailseite
   let currentDetail=null;
   let slideIndex=1;
   let startX=0;
@@ -66,11 +138,11 @@
     document.getElementById("productDetail").style.display="block";
     document.getElementById("detailName").innerText=p.name;
     document.getElementById("detailPrice").innerText="€"+p.price.toFixed(2);
-    document.getElementById("detailDescription").innerText=p.name; // Beschreibung = Produktname
+    document.getElementById("detailDescription").innerText=p.name;
 
     const cont=document.getElementById("detailSlideshow");
     cont.innerHTML="";
-    p.images.forEach((img,i)=>{
+    p.images.forEach(img=>{
       const slide=document.createElement("div");
       slide.className="slides fade";
       slide.innerHTML=`<img src="${img}">`;
@@ -81,14 +153,12 @@
     slideIndex=1;
     showSlides(slideIndex);
 
-    // Touch Events für Wischen
-    cont.addEventListener("touchstart", e=>{
-      startX=e.touches[0].clientX;
-    });
+    // Touch
+    cont.addEventListener("touchstart", e=>{startX=e.touches[0].clientX;});
     cont.addEventListener("touchend", e=>{
       let endX=e.changedTouches[0].clientX;
-      if(startX-endX>50) plusSlides(1); // nach links wischen
-      if(endX-startX>50) plusSlides(-1); // nach rechts wischen
+      if(startX-endX>50) plusSlides(1);
+      if(endX-startX>50) plusSlides(-1);
     });
   }
 
@@ -100,11 +170,72 @@
   function plusSlides(n){showSlides(slideIndex+=n);}
   function showSlides(n){
     const slides=document.getElementsByClassName("slides");
-    if(n>slides.length){slideIndex=1}
-    if(n<1){slideIndex=slides.length}
-    for(let i=0;i<slides.length;i++){slides[i].style.display="none";}
+    if(n>slides.length) slideIndex=1;
+    if(n<1) slideIndex=slides.length;
+    for(let i=0;i<slides.length;i++) slides[i].style.display="none";
     slides[slideIndex-1].style.display="block";
   }
+
+  // Warenkorb
+  let cart=[];
+  function addToCart(id){
+    const item=products.find(p=>p.id===id);
+    cart.push(item);
+    updateCart();
+  }
+  function updateCart(){
+    document.getElementById("cartCount").innerText=cart.length;
+    const cont=document.getElementById("cartItems");
+    cont.innerHTML="";
+    let total=0;
+    cart.forEach((c,i)=>{
+      total+=c.price;
+      cont.innerHTML+=`<div class="cart-item"><b>${c.name}</b><br>€${c.price.toFixed(2)}
+        <small onclick="removeFromCart(${i})">aus Warenkorb entfernen</small></div>`;
+    });
+    document.getElementById("totalPrice").innerText="Gesamt: €"+total.toFixed(2);
+  }
+  function removeFromCart(i){cart.splice(i,1); updateCart();}
+  function showCart(){
+    document.getElementById("shopPage").style.display="none";
+    document.getElementById("productDetail").style.display="none";
+    document.getElementById("cartPage").style.display="block";
+  }
+  function closeCart(){
+    document.getElementById("cartPage").style.display="none";
+    document.getElementById("shopPage").style.display="block";
+  }
+  function clearCart(){cart=[]; updateCart();}
+
+  // Kaufen
+  function buyAll(){
+    if(cart.length===0){alert("Warenkorb leer"); return;}
+    let body="Hallo😁,%0D%0AIch möchte folgende Produkte kaufen:%0D%0A";
+    cart.forEach(c=>{body+=`- ${c.name} (€${c.price.toFixed(2)})%0D%0A`;});
+    body+="%0D%0ADanke!";
+    window.location.href=`mailto:online.shop551552@gmail.com?subject=Kaufanfrage&body=${body}`;
+    clearCart();
+  }
+  function buyDetail(id){
+    const p=products.find(x=>x.id===id);
+    let body=`Hallo😁,%0D%0AIch möchte folgendes Produkt kaufen:%0D%0A- ${p.name} (€${p.price.toFixed(2)})%0D%0ADanke!`;
+    window.location.href=`mailto:online.shop551552@gmail.com?subject=Kaufanfrage&body=${body}`;
+  }
+
+  // Suche
+  function searchProducts(){
+    const q=document.getElementById("searchInput").value.toLowerCase();
+    const items=document.querySelectorAll(".product");
+    products.forEach((p,i)=>{items[i].style.display=p.name.toLowerCase().includes(q)?"block":"none";});
+  }
+  function searchCart(){
+    const q=document.getElementById("cartSearchInput").value.toLowerCase();
+    const items=document.querySelectorAll("#cartItems .cart-item");
+    cart.forEach((c,i)=>{items[i].style.display=c.name.toLowerCase().includes(q)?"block":"none";});
+  }
+
+  // Start
+  document.getElementById("loginPage").style.display="block";
 </script>
 </body>
 </html>
