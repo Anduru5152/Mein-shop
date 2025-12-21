@@ -5,6 +5,9 @@
 <title>Mein Shop</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 :root{
   --bg:#f5f5f5;
@@ -86,7 +89,7 @@ header h1{margin:0;font-size:20px;color:#fff;}
   position:absolute;
   top:2px;left:2px;
   transition:0.3s;
-  border:2px solid var(--text); /* Rand schwarz/weiß je nach Mode */
+  border:2px solid var(--text);
 }
 body.dark .switch{
   background:#333;
@@ -321,7 +324,8 @@ function updateCart(){
  });
  document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
  document.getElementById("buyAll").disabled=cart.length===0;
-  // Warenkorb Search
+
+  // Update search bar
   const input=document.getElementById("searchInput");
   if(document.getElementById("cartPage").style.display=="block"){
     document.getElementById("headerTitle").innerText="Mein Warenkorb";
@@ -347,15 +351,48 @@ function clearCart(){
  updateCart();
 }
 
+/* PDF RECHNUNG */
+async function createInvoice(items){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+  doc.setFontSize(16);
+  doc.text("Rechnung", 105, y, { align: "center" });
+  y += 10;
+
+  doc.setFontSize(12);
+  doc.text("Anduru Store", 10, y);
+  y += 10;
+  doc.text(`Datum: ${new Date().toLocaleDateString()}`, 10, y);
+  y += 10;
+  doc.text("Produkte:", 10, y);
+  y += 10;
+
+  let total = 0;
+  items.forEach(item => {
+    doc.text(`${item.name} - €${item.price.toFixed(2)}`, 10, y);
+    total += item.price;
+    y += 10;
+  });
+
+  doc.text(`Gesamt: €${total.toFixed(2)}`, 10, y + 10);
+  doc.save("Rechnung.pdf");
+}
+
 /* KAUF */
 function buyNow(){
- const p=products[current];
- location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte ${p.name} kaufen.%0ADanke!`;
+  const p = products[current];
+  createInvoice([p]);
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte ${p.name} kaufen.%0ADanke!`;
 }
+
 function buyAll(){
- let text="Hallo😁%0AIch möchte kaufen:%0A";
- cart.forEach(id=>text+=products[id].name+"%0A");
- location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=${text}%0ADanke!`;
+  const cartItems = cart.map(id => products[id]);
+  createInvoice(cartItems);
+  let text="Hallo😁%0AIch möchte kaufen:%0A";
+  cartItems.forEach(item => text += item.name + "%0A");
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=${text}%0ADanke!`;
 }
 
 /* NAV */
@@ -396,10 +433,8 @@ function searchCart(){
 function toggleDark(){
  document.body.classList.toggle("dark");
  localStorage.setItem("dark",document.body.classList.contains("dark"));
-  // Update switch border
-  document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
+ document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
 }
-// initial switch border
 document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
 
 </script>
