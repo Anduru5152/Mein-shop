@@ -106,15 +106,6 @@ body.dark .switch span{
   width:100%;
   border-radius:10px;
 }
-.product button{
-  margin-top:8px;
-  padding:8px;
-  width:100%;
-  border:none;
-  border-radius:6px;
-  background:var(--accent);
-  color:#fff;
-}
 
 /* SEITEN */
 #cartPage,#detailPage{display:none;padding:15px;}
@@ -145,6 +136,19 @@ button.main{
   cursor:pointer;
 }
 button.main:disabled{opacity:.4;cursor:not-allowed;}
+
+.cart-item{
+  margin-bottom:8px;
+}
+.cart-item span{
+  cursor:pointer;
+  text-decoration:underline;
+}
+.cart-item small{
+  margin-left:10px;
+  cursor:pointer;
+  color:gray;
+}
 </style>
 </head>
 
@@ -153,7 +157,7 @@ button.main:disabled{opacity:.4;cursor:not-allowed;}
 <header>
   <h1>Mein Shop</h1>
   <div class="search-bar">
-    <input id="search" placeholder="Produkte suchen…" onkeyup="search()">
+    <input id="searchInput" placeholder="Produkte suchen…" onkeyup="search()">
   </div>
   <div class="switch" onclick="toggleDark()"><span></span></div>
   <div class="cart-icon" onclick="openCart()">🛒
@@ -201,26 +205,32 @@ const products=[...Array(10)].map((_,i)=>({
  ]
 }));
 
-let cart=[],current=0,slide=0;
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+let current=0,slide=0,startX=0;
 
 /* RENDER */
 const list=document.getElementById("products");
-products.forEach(p=>{
- const d=document.createElement("div");
- d.className="product";
- d.onclick=()=>openDetail(p.id);
- d.innerHTML=`
- <img src="${p.images[0]}">
- <h3>${p.name}</h3>
- <p>€${p.price.toFixed(2)}</p>
- `;
- list.appendChild(d);
-});
+function renderProducts(){
+ list.innerHTML="";
+ products.forEach(p=>{
+  const d=document.createElement("div");
+  d.className="product";
+  d.onclick=()=>openDetail(p.id);
+  d.innerHTML=`
+   <img src="${p.images[0]}">
+   <h3>${p.name}</h3>
+   <p>€${p.price.toFixed(2)}</p>
+  `;
+  list.appendChild(d);
+ });
+}
+renderProducts();
 
 /* DETAIL */
 function openDetail(id){
  current=id;
  document.getElementById("products").style.display="none";
+ document.getElementById("cartPage").style.display="none";
  document.getElementById("detailPage").style.display="block";
  const p=products[id];
  document.getElementById("dName").innerText=p.name;
@@ -229,11 +239,12 @@ function openDetail(id){
 
  const s=document.getElementById("slider");
  s.innerHTML="";
- p.images.forEach((img,i)=>{
+ p.images.forEach(img=>{
   s.innerHTML+=`<div class="slide"><img src="${img}"></div>`;
  });
  s.innerHTML+=`<div class="prev" onclick="move(-1)">❮</div><div class="next" onclick="move(1)">❯</div>`;
  slide=0;show();
+
  s.ontouchstart=e=>startX=e.touches[0].clientX;
  s.ontouchend=e=>{
   let x=e.changedTouches[0].clientX;
@@ -252,28 +263,43 @@ function show(){
 
 /* CART */
 function addToCart(id){
- cart.push(products[id]);
+ cart.push(id);
+ saveCart();
  updateCart();
+}
+function saveCart(){
+ localStorage.setItem("cart",JSON.stringify(cart));
 }
 function updateCart(){
  document.getElementById("count").innerText=cart.length;
  const c=document.getElementById("cartItems");
  c.innerHTML="";
  let t=0;
- cart.forEach((p,i)=>{
+ cart.forEach((id,i)=>{
+  const p=products[id];
   t+=p.price;
-  c.innerHTML+=`<div>${p.name} – €${p.price.toFixed(2)} <small onclick="cart.splice(${i},1);updateCart()">entfernen</small></div>`;
+  c.innerHTML+=`
+   <div class="cart-item">
+     <span onclick="openDetail(${id})">${p.name}</span> – €${p.price.toFixed(2)}
+     <small onclick="cart.splice(${i},1);saveCart();updateCart()">entfernen</small>
+   </div>`;
  });
  document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
  document.getElementById("buyAll").disabled=cart.length===0;
 }
+updateCart();
+
 function openCart(){
  document.getElementById("products").style.display="none";
  document.getElementById("detailPage").style.display="none";
  document.getElementById("cartPage").style.display="block";
  updateCart();
 }
-function clearCart(){cart=[];updateCart();}
+function clearCart(){
+ cart=[];
+ saveCart();
+ updateCart();
+}
 
 /* KAUF */
 function buyNow(){
@@ -282,7 +308,7 @@ function buyNow(){
 }
 function buyAll(){
  let text="Hallo😁%0AIch möchte kaufen:%0A";
- cart.forEach(p=>text+=p.name+"%0A");
+ cart.forEach(id=>text+=products[id].name+"%0A");
  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=${text}%0ADanke!`;
 }
 
