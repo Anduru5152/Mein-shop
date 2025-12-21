@@ -156,7 +156,7 @@ button.main:disabled{opacity:.4;cursor:not-allowed;}
 <body>
 
 <header>
-  <h1>Mein Shop</h1>
+  <h1 id="headerTitle">Mein Shop</h1>
   <div class="search-bar">
     <input id="searchInput" placeholder="Produkte suchen…" onkeyup="search()">
   </div>
@@ -208,6 +208,7 @@ const products=[...Array(10)].map((_,i)=>({
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
 let current=0,slide=0,startX=0;
+let currentPage="shop";
 
 /* RENDER */
 const list=document.getElementById("products");
@@ -230,6 +231,8 @@ renderProducts();
 /* DETAIL */
 function openDetail(id){
  current=id;
+ currentPage="detail";
+ updateHeader();
  document.getElementById("products").style.display="none";
  document.getElementById("cartPage").style.display="none";
  document.getElementById("detailPage").style.display="block";
@@ -291,6 +294,8 @@ function updateCart(){
 updateCart();
 
 function openCart(){
+ currentPage="cart";
+ updateHeader();
  document.getElementById("products").style.display="none";
  document.getElementById("detailPage").style.display="none";
  document.getElementById("cartPage").style.display="block";
@@ -315,6 +320,8 @@ function buyAll(){
 
 /* NAV */
 function back(){
+ currentPage="shop";
+ updateHeader();
  document.getElementById("cartPage").style.display="none";
  document.getElementById("detailPage").style.display="none";
  document.getElementById("products").style.display="grid";
@@ -322,10 +329,32 @@ function back(){
 
 /* SEARCH */
 function search(){
- const q=searchInput.value.toLowerCase();
- document.querySelectorAll(".product").forEach((p,i)=>{
-  p.style.display=products[i].name.toLowerCase().includes(q)?"block":"none";
- });
+ const q=document.getElementById("searchInput").value.toLowerCase();
+ if(currentPage==="shop"){
+   document.querySelectorAll(".product").forEach((p,i)=>{
+     p.style.display=products[i].name.toLowerCase().includes(q)?"block":"none";
+   });
+ } else if(currentPage==="cart"){
+   const cItems=document.querySelectorAll(".cart-item span");
+   cItems.forEach((span,i)=>{
+     span.parentElement.style.display=products[cart[i]].name.toLowerCase().includes(q)?"block":"none";
+   });
+ }
+}
+
+/* HEADER UPDATE */
+function updateHeader(){
+ const headerTitle=document.getElementById("headerTitle");
+ const searchInput=document.getElementById("searchInput");
+ if(currentPage==="shop"){
+   headerTitle.innerText="Mein Shop";
+   searchInput.placeholder="Produkte suchen…";
+   searchInput.value="";
+ } else if(currentPage==="cart"){
+   headerTitle.innerText="Mein Warenkorb";
+   searchInput.placeholder="Produkt im Warenkorb suchen…";
+   searchInput.value="";
+ }
 }
 
 /* DARKMODE */
