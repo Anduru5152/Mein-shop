@@ -86,7 +86,7 @@ header h1{margin:0;font-size:20px;color:#fff;}
   position:absolute;
   top:2px;left:2px;
   transition:0.3s;
-  border:2px solid var(--text); 
+  border:2px solid var(--text); /* Rand schwarz/weiß je nach Mode */
 }
 body.dark .switch{
   background:#333;
@@ -109,7 +109,6 @@ body.dark .switch span{
   padding:10px;
   text-align:center;
   cursor:pointer;
-  transition: transform 0.3s;
 }
 .product img{
   width:100%;
@@ -174,32 +173,9 @@ footer a{
   text-decoration:none;
 }
 footer a:hover{text-decoration:underline;}
-
-/* Rabatt Popup */
-#discountPopup{
-  position:fixed;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  background:var(--card);
-  color:var(--text);
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 0 10px rgba(0,0,0,0.5);
-  display:none;
-  text-align:center;
-  z-index:9999;
-}
-#discountPopup button{
-  margin-top:10px;
-  padding:8px 12px;
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  cursor:pointer;
-}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -219,9 +195,12 @@ footer a:hover{text-decoration:underline;}
 <div id="detailPage">
   <button onclick="back()">← Zurück</button>
   <h2 id="dName"></h2>
+
   <div class="slider" id="slider"></div>
+
   <p id="dDesc"></p>
   <p id="dPrice"></p>
+
   <div style="display:flex;gap:10px;justify-content:center">
     <button class="main" onclick="buyNow()">Jetzt kaufen</button>
     <button class="main" onclick="addToCart(current)">In Warenkorb</button>
@@ -240,17 +219,11 @@ footer a:hover{text-decoration:underline;}
 
 <footer>
   © 2025 Anduru Store |
-  <a href="#">Datenschutz</a> |
-  <a href="#">Nutzungsbedingungen</a> |
-  <a href="#">Kontakt</a> |
-  <a href="#">Hilfe</a>
+  <a href="datenschutz.html">Datenschutz</a> |
+  <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a> |
+  <a href="kontakt.html">Kontakt</a> |
+  <a href="hilfe.html">Hilfe</a>
 </footer>
-
-<!-- Rabatt Popup -->
-<div id="discountPopup">
-  <p id="discountText"></p>
-  <button onclick="closePopup()">OK</button>
-</div>
 
 <script>
 /* PRODUKTE */
@@ -274,10 +247,10 @@ let current=0,slide=0,startX=0;
 const list=document.getElementById("products");
 function renderProducts(){
  list.innerHTML="";
- products.forEach((p,i)=>{
+ products.forEach(p=>{
   const d=document.createElement("div");
   d.className="product";
-  d.onclick=()=>{ crazyEffect(i); openDetail(i); }; // Effekt + Detail
+  d.onclick=()=>openDetail(p.id);
   d.innerHTML=`
    <img src="${p.images[0]}">
    <h3>${p.name}</h3>
@@ -287,25 +260,6 @@ function renderProducts(){
  });
 }
 renderProducts();
-
-/* CRAZY EFFECT */
-function crazyEffect(id){
-  const product = document.querySelectorAll('.product')[id];
-  // hüpfen
-  product.style.transform="scale(1.2)";
-  setTimeout(()=>{ product.style.transform="scale(1)"; }, 300);
-  // Sound
-  const audio = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
-  audio.play();
-  // Zufälliger Rabatt
-  const discount = Math.floor(Math.random()*50)+10;
-  const popup = document.getElementById("discountPopup");
-  document.getElementById("discountText").innerText=`🔥 Krasser Deal! ${discount}% Rabatt auf ${products[id].name}!`;
-  popup.style.display="block";
-}
-function closePopup(){
-  document.getElementById("discountPopup").style.display="none";
-}
 
 /* DETAIL */
 function openDetail(id){
@@ -367,9 +321,9 @@ function updateCart(){
  });
  document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
  document.getElementById("buyAll").disabled=cart.length===0;
-
- const input=document.getElementById("searchInput");
- if(document.getElementById("cartPage").style.display=="block"){
+  // Warenkorb Search
+  const input=document.getElementById("searchInput");
+  if(document.getElementById("cartPage").style.display=="block"){
     document.getElementById("headerTitle").innerText="Mein Warenkorb";
     input.placeholder="Produkt im Warenkorb suchen…";
     input.onkeyup=searchCart;
@@ -442,9 +396,12 @@ function searchCart(){
 function toggleDark(){
  document.body.classList.toggle("dark");
  localStorage.setItem("dark",document.body.classList.contains("dark"));
- document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
+  // Update switch border
+  document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
 }
+// initial switch border
 document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
+
 </script>
 </body>
 </html>
