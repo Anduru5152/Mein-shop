@@ -11,12 +11,14 @@
   --card:#fff;
   --text:#000;
   --accent:#ff6600;
+  --switch-bg:#fff;
   --switch-border:#000;
 }
 body.dark{
   --bg:#111;
   --card:#1e1e1e;
   --text:#fff;
+  --switch-bg:#333;
   --switch-border:#fff;
 }
 
@@ -69,7 +71,7 @@ header h1{margin:0;font-size:20px;color:#fff;}
 /* DARKMODE SWITCH */
 .switch{
   width:42px;height:22px;
-  background:#fff;
+  background:var(--switch-bg);
   border-radius:20px;
   position:relative;
   cursor:pointer;
@@ -84,7 +86,6 @@ header h1{margin:0;font-size:20px;color:#fff;}
   transition:0.3s;
 }
 body.dark .switch span{
-  background:#fff;
   transform:translateX(20px);
 }
 
@@ -330,7 +331,7 @@ function search(){
 /* DARKMODE */
 function toggleDark(){
  document.body.classList.toggle("dark");
- localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 }
 window.addEventListener("load", ()=>{
  if(localStorage.getItem("darkMode")==="true"){
