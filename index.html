@@ -23,31 +23,44 @@ h1{font-size:20px;margin:0}
   width:100%;padding:8px;border-radius:6px;border:none;
 }
 
+/* Warenkorb */
 .cart-icon{
   position:relative;background:#fff;color:orange;
   width:32px;height:32px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
 }
+body.dark .cart-icon{background:#2a2a2a}
 .cart-count{
   position:absolute;top:-6px;right:-6px;
   background:red;color:#fff;border-radius:50%;
   font-size:12px;padding:2px 6px;
 }
 
-/* iOS Switch */
+/* iOS Darkmode Switch */
 .switch{width:46px;height:26px;position:relative}
 .switch input{display:none}
 .slider{
-  position:absolute;inset:0;background:#ccc;border-radius:30px;transition:.3s
+  position:absolute;inset:0;
+  background:#fff;
+  border-radius:30px;
+  transition:.3s
 }
+body.dark .slider{background:#2a2a2a}
 .slider:before{
-  content:"";position:absolute;height:20px;width:20px;
-  left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s
+  content:"";
+  position:absolute;
+  height:20px;width:20px;
+  left:3px;bottom:3px;
+  background:orange;
+  border-radius:50%;
+  transition:.3s
 }
-input:checked + .slider{background:#4cd964}
-input:checked + .slider:before{transform:translateX(20px)}
+input:checked + .slider:before{
+  transform:translateX(20px)
+}
 
+/* Produkte */
 .products{
   display:grid;grid-template-columns:repeat(2,1fr);
   gap:15px;padding:15px;
@@ -76,8 +89,10 @@ body.dark .cart-item{background:#1e1e1e}
 .slide{display:none;text-align:center}
 .slide img{width:70%;border-radius:8px}
 .fade{animation:slide .4s}
-@keyframes slide{from{opacity:0;transform:translateX(40px)}to{opacity:1}}
-
+@keyframes slide{
+  from{opacity:0;transform:translateX(40px)}
+  to{opacity:1}
+}
 .prev,.next{
   position:absolute;top:50%;transform:translateY(-50%);
   background:rgba(0,0,0,.6);color:#fff;
@@ -92,13 +107,18 @@ body.dark .cart-item{background:#1e1e1e}
 
 <header>
   <h1>Mein Shop</h1>
+
   <div class="search-bar">
     <input id="search" placeholder="Suchen..." onkeyup="searchProducts()">
   </div>
+
+  <!-- Darkmode LINKS -->
   <label class="switch">
     <input type="checkbox" onchange="toggleDark()">
     <span class="slider"></span>
   </label>
+
+  <!-- Warenkorb RECHTS -->
   <div class="cart-icon" onclick="openCart()">🛒
     <div class="cart-count" id="cartCount">0</div>
   </div>
@@ -126,18 +146,24 @@ body.dark .cart-item{background:#1e1e1e}
 </div>
 
 <script>
-const products=[
- {id:1,name:"Produkt 1",price:9.99,images:["https://via.placeholder.com/400"]},
- {id:2,name:"Produkt 2",price:19.99,images:["https://via.placeholder.com/400"]},
- {id:3,name:"Produkt 3",price:29.99,images:["https://via.placeholder.com/400"]}
-];
+const products=[];
+for(let i=1;i<=10;i++){
+  products.push({
+    id:i,
+    name:"Produkt "+i,
+    price:(i*9.99).toFixed(2),
+    images:["https://via.placeholder.com/400?text=Produkt+"+i]
+  });
+}
 
 const list=document.getElementById("productList");
 products.forEach(p=>{
   const d=document.createElement("div");
   d.className="product";
   d.onclick=()=>openDetail(p.id);
-  d.innerHTML=`<img src="${p.images[0]}"><h3>${p.name}</h3><p>€${p.price}</p>`;
+  d.innerHTML=`<img src="${p.images[0]}">
+               <h3>${p.name}</h3>
+               <p>€${p.price}</p>`;
   list.appendChild(d);
 });
 
@@ -152,8 +178,8 @@ function searchProducts(){
 
 function openDetail(id){
   current=products.find(p=>p.id===id);
-  document.getElementById("detailPage").style.display="block";
-  document.getElementById("productList").style.display="none";
+  detailPage.style.display="block";
+  productList.style.display="none";
   dName.innerText=current.name;
   dDesc.innerText=current.name;
   dPrice.innerText="€"+current.price;
@@ -177,7 +203,10 @@ function show(){
   s.forEach(x=>x.style.display="none");
   s[idx].style.display="block";
 }
-function slide(n){idx=(idx+n+s.length)%s.length;show()}
+function slide(n){
+  const s=document.querySelectorAll(".slide");
+  idx=(idx+n+s.length)%s.length;show()
+}
 
 function openCart(){
   cartPage.style.display="block";
@@ -189,8 +218,8 @@ function renderCart(){
   cartItems.innerHTML="";
   let sum=0;
   cart.forEach(p=>{
-    sum+=p.price;
-    cartItems.innerHTML+=`<div class="cart-item">${p.name} - €${p.price}</div>`;
+    sum+=parseFloat(p.price);
+    cartItems.innerHTML+=`<div class="cart-item">${p.name} – €${p.price}</div>`;
   });
   total.innerText="Gesamt: €"+sum.toFixed(2);
   buyAll.disabled=cart.length===0;
@@ -212,7 +241,258 @@ function back(){
   productList.style.display="grid";
 }
 
-function toggleDark(){document.body.classList.toggle("dark")}
+function toggleDark(){
+  document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Mein Shop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;font-family:Arial;background:#f5f5f5;transition:.3s;
+}
+body.dark{background:#121212;color:#fff}
+
+header{
+  display:flex;align-items:center;gap:10px;
+  background:#ff6600;color:#fff;padding:10px;
+}
+body.dark header{background:#1f1f1f}
+
+h1{font-size:20px;margin:0}
+.search-bar{flex:1}
+.search-bar input{
+  width:100%;padding:8px;border-radius:6px;border:none;
+}
+
+/* Warenkorb */
+.cart-icon{
+  position:relative;background:#fff;color:orange;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+body.dark .cart-icon{background:#2a2a2a}
+.cart-count{
+  position:absolute;top:-6px;right:-6px;
+  background:red;color:#fff;border-radius:50%;
+  font-size:12px;padding:2px 6px;
+}
+
+/* iOS Darkmode Switch */
+.switch{width:46px;height:26px;position:relative}
+.switch input{display:none}
+.slider{
+  position:absolute;inset:0;
+  background:#fff;
+  border-radius:30px;
+  transition:.3s
+}
+body.dark .slider{background:#2a2a2a}
+.slider:before{
+  content:"";
+  position:absolute;
+  height:20px;width:20px;
+  left:3px;bottom:3px;
+  background:orange;
+  border-radius:50%;
+  transition:.3s
+}
+input:checked + .slider:before{
+  transform:translateX(20px)
+}
+
+/* Produkte */
+.products{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:15px;padding:15px;
+}
+.product{
+  background:#fff;padding:10px;border-radius:8px;
+  text-align:center;cursor:pointer
+}
+body.dark .product{background:#1e1e1e}
+.product img{width:100%;border-radius:8px}
+button{
+  padding:8px;border:none;border-radius:6px;
+  background:orange;color:#fff;cursor:pointer
+}
+button:disabled{background:#999;cursor:not-allowed}
+
+#cartPage,#detailPage{display:none;padding:15px}
+
+.cart-item{
+  background:#fff;padding:10px;border-radius:8px;margin-bottom:10px
+}
+body.dark .cart-item{background:#1e1e1e}
+
+/* Slideshow */
+.slideshow{position:relative;overflow:hidden}
+.slide{display:none;text-align:center}
+.slide img{width:70%;border-radius:8px}
+.fade{animation:slide .4s}
+@keyframes slide{
+  from{opacity:0;transform:translateX(40px)}
+  to{opacity:1}
+}
+.prev,.next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,.6);color:#fff;
+  padding:10px;border-radius:50%;cursor:pointer
+}
+.prev{left:10px}
+.next{right:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Mein Shop</h1>
+
+  <div class="search-bar">
+    <input id="search" placeholder="Suchen..." onkeyup="searchProducts()">
+  </div>
+
+  <!-- Darkmode LINKS -->
+  <label class="switch">
+    <input type="checkbox" onchange="toggleDark()">
+    <span class="slider"></span>
+  </label>
+
+  <!-- Warenkorb RECHTS -->
+  <div class="cart-icon" onclick="openCart()">🛒
+    <div class="cart-count" id="cartCount">0</div>
+  </div>
+</header>
+
+<div class="products" id="productList"></div>
+
+<!-- DETAIL -->
+<div id="detailPage">
+  <button onclick="back()">⬅ Zurück</button>
+  <h2 id="dName"></h2>
+  <div class="slideshow" id="slides"></div>
+  <p id="dDesc"></p>
+  <p id="dPrice"></p>
+  <button onclick="buySingle()">Jetzt kaufen</button>
+</div>
+
+<!-- CART -->
+<div id="cartPage">
+  <button onclick="back()">⬅ Zurück</button>
+  <h2>Warenkorb</h2>
+  <div id="cartItems"></div>
+  <p id="total"></p>
+  <button id="buyAll" onclick="buyAll()" disabled>Alle kaufen</button>
+</div>
+
+<script>
+const products=[];
+for(let i=1;i<=10;i++){
+  products.push({
+    id:i,
+    name:"Produkt "+i,
+    price:(i*9.99).toFixed(2),
+    images:["https://via.placeholder.com/400?text=Produkt+"+i]
+  });
+}
+
+const list=document.getElementById("productList");
+products.forEach(p=>{
+  const d=document.createElement("div");
+  d.className="product";
+  d.onclick=()=>openDetail(p.id);
+  d.innerHTML=`<img src="${p.images[0]}">
+               <h3>${p.name}</h3>
+               <p>€${p.price}</p>`;
+  list.appendChild(d);
+});
+
+let cart=[],current=null,idx=0,startX=0;
+
+function searchProducts(){
+  const q=search.value.toLowerCase();
+  [...list.children].forEach((el,i)=>{
+    el.style.display=products[i].name.toLowerCase().includes(q)?"block":"none";
+  });
+}
+
+function openDetail(id){
+  current=products.find(p=>p.id===id);
+  detailPage.style.display="block";
+  productList.style.display="none";
+  dName.innerText=current.name;
+  dDesc.innerText=current.name;
+  dPrice.innerText="€"+current.price;
+  slides.innerHTML="";
+  current.images.forEach(img=>{
+    slides.innerHTML+=`<div class="slide fade"><img src="${img}"></div>`;
+  });
+  slides.innerHTML+=`<span class="prev" onclick="slide(-1)">❮</span>
+                     <span class="next" onclick="slide(1)">❯</span>`;
+  idx=0;show();
+  slides.ontouchstart=e=>startX=e.touches[0].clientX;
+  slides.ontouchend=e=>{
+    let dx=e.changedTouches[0].clientX-startX;
+    if(dx>50)slide(-1);
+    if(dx<-50)slide(1);
+  };
+}
+
+function show(){
+  const s=document.querySelectorAll(".slide");
+  s.forEach(x=>x.style.display="none");
+  s[idx].style.display="block";
+}
+function slide(n){
+  const s=document.querySelectorAll(".slide");
+  idx=(idx+n+s.length)%s.length;show()
+}
+
+function openCart(){
+  cartPage.style.display="block";
+  productList.style.display="none";
+  renderCart();
+}
+
+function renderCart(){
+  cartItems.innerHTML="";
+  let sum=0;
+  cart.forEach(p=>{
+    sum+=parseFloat(p.price);
+    cartItems.innerHTML+=`<div class="cart-item">${p.name} – €${p.price}</div>`;
+  });
+  total.innerText="Gesamt: €"+sum.toFixed(2);
+  buyAll.disabled=cart.length===0;
+  cartCount.innerText=cart.length;
+}
+
+function buyAll(){
+  let txt=cart.map(p=>"- "+p.name).join("%0A");
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte kaufen:%0A${txt}%0ADanke!`;
+}
+
+function buySingle(){
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte kaufen:%0A- ${current.name}%0ADanke!`;
+}
+
+function back(){
+  detailPage.style.display="none";
+  cartPage.style.display="none";
+  productList.style.display="grid";
+}
+
+function toggleDark(){
+  document.body.classList.toggle("dark");
+}
 </script>
 
 </body>
