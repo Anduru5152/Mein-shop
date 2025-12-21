@@ -6,101 +6,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root{
-  --bg:#f5f5f5;
-  --card:#fff;
-  --text:#000;
-  --orange:#ff6600;
-}
-body.dark{
-  --bg:#121212;
-  --card:#1e1e1e;
-  --text:#fff;
-}
-
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  margin:0;font-family:Arial;background:#f5f5f5;transition:.3s;
 }
+body.dark{background:#121212;color:#fff}
 
-/* HEADER */
 header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 15px;
-  background:var(--orange);
-  color:#fff;
+  display:flex;align-items:center;gap:10px;
+  background:#ff6600;color:#fff;padding:10px;
 }
-header h1{margin:0;font-size:18px;}
+body.dark header{background:#1f1f1f}
 
-.header-right{
-  display:flex;
-  gap:10px;
-  align-items:center;
+h1{font-size:20px;margin:0}
+.search-bar{flex:1}
+.search-bar input{
+  width:100%;padding:8px;border-radius:6px;border:none;
 }
 
-button{
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
+.cart-icon{
+  position:relative;background:#fff;color:orange;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
   cursor:pointer;
 }
-button:disabled{
-  opacity:.5;
-  cursor:not-allowed;
+.cart-count{
+  position:absolute;top:-6px;right:-6px;
+  background:red;color:#fff;border-radius:50%;
+  font-size:12px;padding:2px 6px;
 }
 
-.dark-toggle{
-  background:#fff;
-  color:#000;
+/* iOS Switch */
+.switch{width:46px;height:26px;position:relative}
+.switch input{display:none}
+.slider{
+  position:absolute;inset:0;background:#ccc;border-radius:30px;transition:.3s
 }
+.slider:before{
+  content:"";position:absolute;height:20px;width:20px;
+  left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s
+}
+input:checked + .slider{background:#4cd964}
+input:checked + .slider:before{transform:translateX(20px)}
 
-/* PRODUCTS */
 .products{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-  padding:15px;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:15px;padding:15px;
 }
 .product{
-  background:var(--card);
-  border-radius:8px;
-  padding:10px;
-  text-align:center;
-  cursor:pointer;
+  background:#fff;padding:10px;border-radius:8px;
+  text-align:center;cursor:pointer
 }
-.product img{
-  width:100%;
-  border-radius:8px;
+body.dark .product{background:#1e1e1e}
+.product img{width:100%;border-radius:8px}
+button{
+  padding:8px;border:none;border-radius:6px;
+  background:orange;color:#fff;cursor:pointer
 }
-.product h3{margin:8px 0;}
-.product button{
-  background:orange;
-  color:#fff;
-}
+button:disabled{background:#999;cursor:not-allowed}
 
-/* CART */
-#cartPage,#impressumPage,#datenschutzPage{display:none;padding:15px;}
+#cartPage,#detailPage{display:none;padding:15px}
+
 .cart-item{
-  background:var(--card);
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:10px;
+  background:#fff;padding:10px;border-radius:8px;margin-bottom:10px
 }
+body.dark .cart-item{background:#1e1e1e}
 
-/* FOOTER LINKS */
-.footer-links{
-  text-align:center;
-  padding:15px;
+/* Slideshow */
+.slideshow{position:relative;overflow:hidden}
+.slide{display:none;text-align:center}
+.slide img{width:70%;border-radius:8px}
+.fade{animation:slide .4s}
+@keyframes slide{from{opacity:0;transform:translateX(40px)}to{opacity:1}}
+
+.prev,.next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,.6);color:#fff;
+  padding:10px;border-radius:50%;cursor:pointer
 }
-.footer-links span{
-  margin:0 10px;
-  cursor:pointer;
-  text-decoration:underline;
-}
+.prev{left:10px}
+.next{right:10px}
 </style>
 </head>
 
@@ -108,141 +92,127 @@ button:disabled{
 
 <header>
   <h1>Mein Shop</h1>
-  <div class="header-right">
-    <button class="dark-toggle" onclick="toggleDark()">🌙</button>
-    <button onclick="openCart()">🛒 (<span id="cartCount">0</span>)</button>
+  <div class="search-bar">
+    <input id="search" placeholder="Suchen..." onkeyup="searchProducts()">
+  </div>
+  <label class="switch">
+    <input type="checkbox" onchange="toggleDark()">
+    <span class="slider"></span>
+  </label>
+  <div class="cart-icon" onclick="openCart()">🛒
+    <div class="cart-count" id="cartCount">0</div>
   </div>
 </header>
 
-<!-- SHOP -->
-<div id="shopPage">
-  <div class="products" id="productList"></div>
+<div class="products" id="productList"></div>
+
+<!-- DETAIL -->
+<div id="detailPage">
+  <button onclick="back()">⬅ Zurück</button>
+  <h2 id="dName"></h2>
+  <div class="slideshow" id="slides"></div>
+  <p id="dDesc"></p>
+  <p id="dPrice"></p>
+  <button onclick="buySingle()">Jetzt kaufen</button>
 </div>
 
 <!-- CART -->
 <div id="cartPage">
+  <button onclick="back()">⬅ Zurück</button>
   <h2>Warenkorb</h2>
   <div id="cartItems"></div>
-  <button id="buyAllBtn" onclick="buyAll()">Alle kaufen</button>
-  <br><br>
-  <button onclick="closeCart()">Zurück</button>
-</div>
-
-<!-- IMPRESSUM -->
-<div id="impressumPage">
-<h2>Impressum</h2>
-<p>Online Shop<br>
-E-Mail: online.shop551552@gmail.com</p>
-<button onclick="backToShop()">Zurück</button>
-</div>
-
-<!-- DATENSCHUTZ -->
-<div id="datenschutzPage">
-<h2>Datenschutz</h2>
-<p>Es werden keine Daten gespeichert. Bestellungen erfolgen per E-Mail.</p>
-<button onclick="backToShop()">Zurück</button>
-</div>
-
-<div class="footer-links">
-  <span onclick="openImpressum()">Impressum</span>
-  <span onclick="openDatenschutz()">Datenschutz</span>
+  <p id="total"></p>
+  <button id="buyAll" onclick="buyAll()" disabled>Alle kaufen</button>
 </div>
 
 <script>
-/* PRODUKTE */
 const products=[
- {id:1,name:"Produkt 1",price:9.99,img:"https://via.placeholder.com/300"},
- {id:2,name:"Produkt 2",price:14.99,img:"https://via.placeholder.com/300"}
+ {id:1,name:"Produkt 1",price:9.99,images:["https://via.placeholder.com/400"]},
+ {id:2,name:"Produkt 2",price:19.99,images:["https://via.placeholder.com/400"]},
+ {id:3,name:"Produkt 3",price:29.99,images:["https://via.placeholder.com/400"]}
 ];
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const list=document.getElementById("productList");
+products.forEach(p=>{
+  const d=document.createElement("div");
+  d.className="product";
+  d.onclick=()=>openDetail(p.id);
+  d.innerHTML=`<img src="${p.images[0]}"><h3>${p.name}</h3><p>€${p.price}</p>`;
+  list.appendChild(d);
+});
 
-/* INIT */
-renderProducts();
-updateCartUI();
-loadDark();
+let cart=[],current=null,idx=0,startX=0;
 
-/* RENDER */
-function renderProducts(){
- const list=document.getElementById("productList");
- list.innerHTML="";
- products.forEach(p=>{
-  list.innerHTML+=`
-   <div class="product">
-    <img src="${p.img}">
-    <h3>${p.name}</h3>
-    <p>${p.price} €</p>
-    <button onclick="addToCart(${p.id})">In den Warenkorb</button>
-   </div>`;
- });
+function searchProducts(){
+  const q=search.value.toLowerCase();
+  [...list.children].forEach((el,i)=>{
+    el.style.display=products[i].name.toLowerCase().includes(q)?"block":"none";
+  });
 }
 
-/* CART */
-function addToCart(id){
- cart.push(products.find(p=>p.id===id));
- saveCart();
- updateCartUI();
+function openDetail(id){
+  current=products.find(p=>p.id===id);
+  document.getElementById("detailPage").style.display="block";
+  document.getElementById("productList").style.display="none";
+  dName.innerText=current.name;
+  dDesc.innerText=current.name;
+  dPrice.innerText="€"+current.price;
+  slides.innerHTML="";
+  current.images.forEach(img=>{
+    slides.innerHTML+=`<div class="slide fade"><img src="${img}"></div>`;
+  });
+  slides.innerHTML+=`<span class="prev" onclick="slide(-1)">❮</span>
+                     <span class="next" onclick="slide(1)">❯</span>`;
+  idx=0;show();
+  slides.ontouchstart=e=>startX=e.touches[0].clientX;
+  slides.ontouchend=e=>{
+    let dx=e.changedTouches[0].clientX-startX;
+    if(dx>50)slide(-1);
+    if(dx<-50)slide(1);
+  };
 }
 
-function updateCartUI(){
- document.getElementById("cartCount").innerText=cart.length;
- document.getElementById("buyAllBtn").disabled = cart.length===0;
-
- const items=document.getElementById("cartItems");
- items.innerHTML="";
- cart.forEach(p=>{
-  items.innerHTML+=`<div class="cart-item">${p.name} – ${p.price} €</div>`;
- });
+function show(){
+  const s=document.querySelectorAll(".slide");
+  s.forEach(x=>x.style.display="none");
+  s[idx].style.display="block";
 }
+function slide(n){idx=(idx+n+s.length)%s.length;show()}
 
-function saveCart(){
- localStorage.setItem("cart",JSON.stringify(cart));
-}
-
-/* BUY */
-function buyAll(){
- if(cart.length===0)return;
- let text="Hallo😁,%0Aich möchte kaufen:%0A";
- cart.forEach(p=>text+=`- ${p.name}%0A`);
- window.location.href="mailto:online.shop551552@gmail.com?subject=Bestellung&body="+text;
- cart=[];
- saveCart();
- updateCartUI();
-}
-
-/* NAV */
 function openCart(){
- shopPage.style.display="none";
- cartPage.style.display="block";
-}
-function closeCart(){
- cartPage.style.display="none";
- shopPage.style.display="block";
-}
-function openImpressum(){
- shopPage.style.display="none";
- impressumPage.style.display="block";
-}
-function openDatenschutz(){
- shopPage.style.display="none";
- datenschutzPage.style.display="block";
-}
-function backToShop(){
- impressumPage.style.display="none";
- datenschutzPage.style.display="none";
- shopPage.style.display="block";
+  cartPage.style.display="block";
+  productList.style.display="none";
+  renderCart();
 }
 
-/* DARK MODE */
-function toggleDark(){
- document.body.classList.toggle("dark");
- localStorage.setItem("dark",document.body.classList.contains("dark"));
+function renderCart(){
+  cartItems.innerHTML="";
+  let sum=0;
+  cart.forEach(p=>{
+    sum+=p.price;
+    cartItems.innerHTML+=`<div class="cart-item">${p.name} - €${p.price}</div>`;
+  });
+  total.innerText="Gesamt: €"+sum.toFixed(2);
+  buyAll.disabled=cart.length===0;
+  cartCount.innerText=cart.length;
 }
-function loadDark(){
- if(localStorage.getItem("dark")==="true"){
-  document.body.classList.add("dark");
- }
+
+function buyAll(){
+  let txt=cart.map(p=>"- "+p.name).join("%0A");
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte kaufen:%0A${txt}%0ADanke!`;
 }
+
+function buySingle(){
+  location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte kaufen:%0A- ${current.name}%0ADanke!`;
+}
+
+function back(){
+  detailPage.style.display="none";
+  cartPage.style.display="none";
+  productList.style.display="grid";
+}
+
+function toggleDark(){document.body.classList.toggle("dark")}
 </script>
 
 </body>
