@@ -71,10 +71,11 @@ header h1{margin:0;font-size:20px;color:#fff;}
   border-radius:20px;
   position:relative;
   cursor:pointer;
+  border:2px solid #000; /* HELL = SCHWARZER RAND */
 }
 .switch span{
   width:18px;height:18px;
-  background:#000; /* HELL = SCHWARZ */
+  background:orange;
   border-radius:50%;
   position:absolute;
   top:2px;left:2px;
@@ -82,9 +83,10 @@ header h1{margin:0;font-size:20px;color:#fff;}
 }
 body.dark .switch{
   background:#333;
+  border:2px solid #fff; /* DUNKEL = WEISSER RAND */
 }
 body.dark .switch span{
-  background:#fff; /* DUNKEL = WEISS */
+  background:#fff;
   transform:translateX(20px);
 }
 
@@ -194,6 +196,7 @@ button.main:disabled{opacity:.4;cursor:not-allowed;}
 </div>
 
 <script>
+/* PRODUKTE */
 const products=[...Array(10)].map((_,i)=>({
  id:i,
  name:`Produkt ${i+1}`,
@@ -207,6 +210,7 @@ const products=[...Array(10)].map((_,i)=>({
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
 let current=0,slide=0,startX=0;
 
+/* RENDER */
 const list=document.getElementById("products");
 function renderProducts(){
  list.innerHTML="";
@@ -227,28 +231,29 @@ renderProducts();
 /* DETAIL */
 function openDetail(id){
  current=id;
- productsDiv(false);
+ document.getElementById("products").style.display="none";
+ document.getElementById("cartPage").style.display="none";
+ document.getElementById("detailPage").style.display="block";
  const p=products[id];
- dName.innerText=p.name;
- dDesc.innerText=p.name;
- dPrice.innerText="€"+p.price.toFixed(2);
+ document.getElementById("dName").innerText=p.name;
+ document.getElementById("dDesc").innerText=p.name;
+ document.getElementById("dPrice").innerText="€"+p.price.toFixed(2);
 
- slider.innerHTML="";
+ const s=document.getElementById("slider");
+ s.innerHTML="";
  p.images.forEach(img=>{
-  slider.innerHTML+=`<div class="slide"><img src="${img}"></div>`;
+  s.innerHTML+=`<div class="slide"><img src="${img}"></div>`;
  });
- slider.innerHTML+=`<div class="prev" onclick="move(-1)">❮</div><div class="next" onclick="move(1)">❯</div>`;
+ s.innerHTML+=`<div class="prev" onclick="move(-1)">❮</div><div class="next" onclick="move(1)">❯</div>`;
  slide=0;show();
 
- slider.ontouchstart=e=>startX=e.touches[0].clientX;
- slider.ontouchend=e=>{
+ s.ontouchstart=e=>startX=e.touches[0].clientX;
+ s.ontouchend=e=>{
   let x=e.changedTouches[0].clientX;
   if(startX-x>40)move(1);
   if(x-startX>40)move(-1);
  };
 }
-
-/* SLIDE */
 function move(n){slide+=n;show();}
 function show(){
  const s=document.querySelectorAll(".slide");
@@ -261,30 +266,42 @@ function show(){
 /* CART */
 function addToCart(id){
  cart.push(id);
- localStorage.setItem("cart",JSON.stringify(cart));
+ saveCart();
  updateCart();
 }
+function saveCart(){
+ localStorage.setItem("cart",JSON.stringify(cart));
+}
 function updateCart(){
- count.innerText=cart.length;
- cartItems.innerHTML="";
+ document.getElementById("count").innerText=cart.length;
+ const c=document.getElementById("cartItems");
+ c.innerHTML="";
  let t=0;
  cart.forEach((id,i)=>{
   const p=products[id];
   t+=p.price;
-  cartItems.innerHTML+=`
+  c.innerHTML+=`
    <div class="cart-item">
      <span onclick="openDetail(${id})">${p.name}</span> – €${p.price.toFixed(2)}
-     <small onclick="cart.splice(${i},1);updateCart()">entfernen</small>
+     <small onclick="cart.splice(${i},1);saveCart();updateCart()">entfernen</small>
    </div>`;
  });
- total.innerText="Gesamt: €"+t.toFixed(2);
- buyAllBtn.disabled=cart.length===0;
- localStorage.setItem("cart",JSON.stringify(cart));
+ document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
+ document.getElementById("buyAll").disabled=cart.length===0;
 }
 updateCart();
 
-function openCart(){productsDiv(false,true);}
-function clearCart(){cart=[];updateCart();}
+function openCart(){
+ document.getElementById("products").style.display="none";
+ document.getElementById("detailPage").style.display="none";
+ document.getElementById("cartPage").style.display="block";
+ updateCart();
+}
+function clearCart(){
+ cart=[];
+ saveCart();
+ updateCart();
+}
 
 /* KAUF */
 function buyNow(){
@@ -298,12 +315,11 @@ function buyAll(){
 }
 
 /* NAV */
-function productsDiv(showProducts=true,showCart=false){
- products.style.display=showProducts?"grid":"none";
- detailPage.style.display="none";
- cartPage.style.display=showCart?"block":"none";
+function back(){
+ document.getElementById("cartPage").style.display="none";
+ document.getElementById("detailPage").style.display="none";
+ document.getElementById("products").style.display="grid";
 }
-function back(){productsDiv(true);}
 
 /* SEARCH */
 function search(){
