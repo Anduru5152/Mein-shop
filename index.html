@@ -11,67 +11,33 @@
   --card:#fff;
   --text:#000;
   --accent:#ff6600;
-  --footer-bg:#eee;
-  --footer-text:#555;
 }
 body.dark{
   --bg:#111;
   --card:#1e1e1e;
   --text:#fff;
-  --footer-bg:#222;
-  --footer-text:#aaa;
 }
-
 body{
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
 }
-
-/* HEADER */
 header{
   display:flex;
-  align-items:center;
   gap:10px;
-  background:var(--accent);
   padding:10px;
+  background:var(--accent);
+  align-items:center;
 }
-header h1{margin:0;font-size:20px;color:#fff;}
-
-.search-bar{flex:1;}
+header h1{color:#fff;margin:0;font-size:20px}
+.search-bar{flex:1}
 .search-bar input{
   width:100%;
   padding:8px;
-  border-radius:6px;
   border:none;
+  border-radius:6px;
 }
-
-.cart-icon{
-  width:34px;height:34px;
-  border-radius:50%;
-  border:3px solid var(--accent);
-  background:#fff;
-  color:var(--accent);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  position:relative;
-}
-.cart-count{
-  position:absolute;
-  top:-6px;right:-6px;
-  background:red;color:#fff;
-  font-size:12px;
-  padding:2px 6px;
-  border-radius:50%;
-}
-
-/* DARKMODE SWITCH */
 .switch{
   width:42px;height:22px;
   background:#fff;
@@ -85,18 +51,28 @@ header h1{margin:0;font-size:20px;color:#fff;}
   border-radius:50%;
   position:absolute;
   top:2px;left:2px;
-  transition:0.3s;
-  border:2px solid var(--text); /* Rand schwarz/weiß je nach Mode */
+  transition:.3s;
 }
-body.dark .switch{
-  background:#333;
-}
-body.dark .switch span{
+body.dark .switch span{transform:translateX(20px);background:#fff}
+.cart-icon{
+  width:34px;height:34px;
+  border-radius:50%;
   background:#fff;
-  transform:translateX(20px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  position:relative;
 }
-
-/* PRODUKTE */
+.cart-count{
+  position:absolute;
+  top:-6px;right:-6px;
+  background:red;
+  color:#fff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:50%;
+}
 .products{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -105,36 +81,27 @@ body.dark .switch span{
 }
 .product{
   background:var(--card);
-  border-radius:10px;
   padding:10px;
+  border-radius:10px;
   text-align:center;
   cursor:pointer;
 }
-.product img{
-  width:100%;
-  border-radius:10px;
-}
-
-/* SEITEN */
-#cartPage,#detailPage{display:none;padding:15px;flex:1}
-
-/* SLIDER */
-.slider{position:relative;text-align:center;}
-.slide{display:none;animation:fade 0.4s;}
-.slide img{width:70%;border-radius:10px;}
-@keyframes fade{from{opacity:0;transform:translateX(30px)}to{opacity:1}}
-
+.product img{width:100%;border-radius:10px}
+#detailPage,#cartPage{display:none;padding:15px}
+.slider{text-align:center;position:relative}
+.slide{display:none}
+.slide img{width:70%;border-radius:10px}
 .prev,.next{
-  position:absolute;top:50%;
+  position:absolute;
+  top:50%;
   background:rgba(0,0,0,.5);
   color:#fff;
-  padding:10px;
+  padding:8px;
   border-radius:50%;
   cursor:pointer;
 }
-.prev{left:10px;}
-.next{right:10px;}
-
+.prev{left:10px}
+.next{right:10px}
 button.main{
   background:var(--accent);
   color:#fff;
@@ -143,43 +110,13 @@ button.main{
   border-radius:6px;
   cursor:pointer;
 }
-button.main:disabled{opacity:.4;cursor:not-allowed;}
-
-.cart-item{
-  margin-bottom:8px;
-}
-.cart-item span{
-  cursor:pointer;
-  text-decoration:underline;
-}
-.cart-item small{
-  margin-left:10px;
-  cursor:pointer;
-  color:gray;
-}
-
-/* FOOTER */
-footer{
-  background:var(--footer-bg);
-  color:var(--footer-text);
-  text-align:center;
-  padding:10px;
-  font-size:14px;
-  margin-top:auto;
-}
-footer a{
-  color:var(--footer-text);
-  margin:0 8px;
-  text-decoration:none;
-}
-footer a:hover{text-decoration:underline;}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1 id="headerTitle">Mein Shop</h1>
+  <h1>Mein Shop</h1>
   <div class="search-bar">
     <input id="searchInput" placeholder="Produkte suchen…" onkeyup="search()">
   </div>
@@ -194,12 +131,18 @@ footer a:hover{text-decoration:underline;}
 <!-- DETAIL -->
 <div id="detailPage">
   <button onclick="back()">← Zurück</button>
+
   <h2 id="dName"></h2>
 
   <div class="slider" id="slider"></div>
 
-  <p id="dDesc"></p>
-  <p id="dPrice"></p>
+  <!-- PRODUKTBESCHREIBUNG -->
+  <p id="dDesc" style="margin-top:15px">
+    Hier kommt die Produktbeschreibung
+  </p>
+
+  <!-- PREIS -->
+  <p id="dPrice" style="font-weight:bold"></p>
 
   <div style="display:flex;gap:10px;justify-content:center">
     <button class="main" onclick="buyNow()">Jetzt kaufen</button>
@@ -209,24 +152,13 @@ footer a:hover{text-decoration:underline;}
 
 <!-- CART -->
 <div id="cartPage">
-  <h2>Mein Warenkorb</h2>
+  <h2>Warenkorb</h2>
   <div id="cartItems"></div>
   <p id="total"></p>
-  <button class="main" id="buyAll" onclick="buyAll()">Alle kaufen</button>
-  <button class="main" onclick="clearCart()">Leeren</button>
   <button class="main" onclick="back()">Zurück</button>
 </div>
 
-<footer>
-  © 2025 Anduru Store |
-  <a href="datenschutz.html">Datenschutz</a> |
-  <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a> |
-  <a href="kontakt.html">Kontakt</a> |
-  <a href="hilfe.html">Hilfe</a>
-</footer>
-
 <script>
-/* PRODUKTE */
 const products=[...Array(10)].map((_,i)=>({
  id:i,
  name:`Produkt ${i+1}`,
@@ -238,56 +170,41 @@ const products=[...Array(10)].map((_,i)=>({
 }));
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
-let dark=localStorage.getItem("dark")=="true";
-if(dark) document.body.classList.add("dark");
+let current=0,slide=0;
 
-let current=0,slide=0,startX=0;
-
-/* RENDER */
 const list=document.getElementById("products");
-function renderProducts(){
+function render(){
  list.innerHTML="";
  products.forEach(p=>{
   const d=document.createElement("div");
   d.className="product";
   d.onclick=()=>openDetail(p.id);
   d.innerHTML=`
-   <img src="${p.images[0]}">
-   <h3>${p.name}</h3>
-   <p>€${p.price.toFixed(2)}</p>
-  `;
+    <img src="${p.images[0]}">
+    <h3>${p.name}</h3>
+    <p>€${p.price.toFixed(2)}</p>`;
   list.appendChild(d);
  });
 }
-renderProducts();
+render();
 
-/* DETAIL */
 function openDetail(id){
  current=id;
- document.getElementById("products").style.display="none";
- document.getElementById("cartPage").style.display="none";
- document.getElementById("detailPage").style.display="block";
+ productsDiv(false);
  const p=products[id];
- document.getElementById("dName").innerText=p.name;
- document.getElementById("dDesc").innerText=p.name;
- document.getElementById("dPrice").innerText="€"+p.price.toFixed(2);
-
- const s=document.getElementById("slider");
- s.innerHTML="";
+ dName.innerText=p.name;
+ dDesc.innerText="Hier kommt die Produktbeschreibung";
+ dPrice.innerText="€"+p.price.toFixed(2);
+ slider.innerHTML="";
  p.images.forEach(img=>{
-  s.innerHTML+=`<div class="slide"><img src="${img}"></div>`;
+  slider.innerHTML+=`<div class="slide"><img src="${img}"></div>`;
  });
- s.innerHTML+=`<div class="prev" onclick="move(-1)">❮</div><div class="next" onclick="move(1)">❯</div>`;
+ slider.innerHTML+=`<div class="prev" onclick="move(-1)">❮</div>
+                    <div class="next" onclick="move(1)">❯</div>`;
  slide=0;show();
-
- s.ontouchstart=e=>startX=e.touches[0].clientX;
- s.ontouchend=e=>{
-  let x=e.changedTouches[0].clientX;
-  if(startX-x>40)move(1);
-  if(x-startX>40)move(-1);
- };
 }
-function move(n){slide+=n;show();}
+
+function move(n){slide+=n;show()}
 function show(){
  const s=document.querySelectorAll(".slide");
  if(slide<0)slide=s.length-1;
@@ -296,112 +213,38 @@ function show(){
  s[slide].style.display="block";
 }
 
-/* CART */
 function addToCart(id){
  cart.push(id);
- saveCart();
- updateCart();
-}
-function saveCart(){
  localStorage.setItem("cart",JSON.stringify(cart));
-}
-function updateCart(){
- document.getElementById("count").innerText=cart.length;
- const c=document.getElementById("cartItems");
- c.innerHTML="";
- let t=0;
- cart.forEach((id,i)=>{
-  const p=products[id];
-  t+=p.price;
-  c.innerHTML+=`
-   <div class="cart-item">
-     <span onclick="openDetail(${id})">${p.name}</span> – €${p.price.toFixed(2)}
-     <small onclick="cart.splice(${i},1);saveCart();updateCart()">entfernen</small>
-   </div>`;
- });
- document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
- document.getElementById("buyAll").disabled=cart.length===0;
-  // Warenkorb Search
-  const input=document.getElementById("searchInput");
-  if(document.getElementById("cartPage").style.display=="block"){
-    document.getElementById("headerTitle").innerText="Mein Warenkorb";
-    input.placeholder="Produkt im Warenkorb suchen…";
-    input.onkeyup=searchCart;
-  } else {
-    document.getElementById("headerTitle").innerText="Mein Shop";
-    input.placeholder="Produkte suchen…";
-    input.onkeyup=search;
-  }
-}
-updateCart();
-
-function openCart(){
- document.getElementById("products").style.display="none";
- document.getElementById("detailPage").style.display="none";
- document.getElementById("cartPage").style.display="block";
- updateCart();
-}
-function clearCart(){
- cart=[];
- saveCart();
- updateCart();
+ count.innerText=cart.length;
 }
 
-/* KAUF */
+function openCart(){productsDiv(false);cartPage.style.display="block"}
+function back(){productsDiv(true)}
+
+function productsDiv(show){
+ products.style.display=show?"grid":"none";
+ detailPage.style.display="none";
+ cartPage.style.display="none";
+ if(!show) detailPage.style.display="block";
+}
+
 function buyNow(){
  const p=products[current];
- location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Hallo😁%0AIch möchte ${p.name} kaufen.%0ADanke!`;
-}
-function buyAll(){
- let text="Hallo😁%0AIch möchte kaufen:%0A";
- cart.forEach(id=>text+=products[id].name+"%0A");
- location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=${text}%0ADanke!`;
+ location.href=`mailto:online.shop551552@gmail.com?subject=Bestellung&body=Ich möchte ${p.name} kaufen.`;
 }
 
-/* NAV */
-function back(){
- document.getElementById("cartPage").style.display="none";
- document.getElementById("detailPage").style.display="none";
- document.getElementById("products").style.display="grid";
- updateCart();
-}
-
-/* SEARCH */
 function search(){
  const q=searchInput.value.toLowerCase();
  document.querySelectorAll(".product").forEach((p,i)=>{
   p.style.display=products[i].name.toLowerCase().includes(q)?"block":"none";
  });
 }
-function searchCart(){
- const q=searchInput.value.toLowerCase();
- const filtered=cart.filter(id=>products[id].name.toLowerCase().includes(q));
- const c=document.getElementById("cartItems");
- c.innerHTML="";
- let t=0;
- filtered.forEach((id,i)=>{
-  const p=products[id];
-  t+=p.price;
-  c.innerHTML+=`
-   <div class="cart-item">
-     <span onclick="openDetail(${id})">${p.name}</span> – €${p.price.toFixed(2)}
-     <small onclick="cart.splice(cart.indexOf(id),1);saveCart();updateCart()">entfernen</small>
-   </div>`;
- });
- document.getElementById("total").innerText="Gesamt: €"+t.toFixed(2);
- document.getElementById("buyAll").disabled=filtered.length===0;
-}
 
-/* DARKMODE */
 function toggleDark(){
  document.body.classList.toggle("dark");
- localStorage.setItem("dark",document.body.classList.contains("dark"));
-  // Update switch border
-  document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
 }
-// initial switch border
-document.querySelector(".switch span").style.borderColor=document.body.classList.contains("dark")?"#fff":"#000";
-
 </script>
+
 </body>
 </html>
