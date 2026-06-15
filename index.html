@@ -143,10 +143,8 @@ button.back-btn {
   </div>
 </header>
 
-<!-- PRODUKTÜBERSICHT -->
 <div class="products" id="productsList"></div>
 
-<!-- DETAIL -->
 <div id="detailPage">
   <button class="back-btn" onclick="back()">← Zurück</button>
   <h2 id="dName"></h2>
@@ -159,13 +157,13 @@ button.back-btn {
   </div>
 </div>
 
-<!-- CART -->
 <div id="cartPage">
   <h2>Warenkorb</h2>
   <div id="cartItems"></div>
   <h3 id="total"></h3>
-  <div style="display:flex; gap:10px;">
+  <div style="display:flex; gap:10px; flex-wrap: wrap;">
     <button class="main" onclick="back()">Weiter einkaufen</button>
+    <button class="main" style="background:#cc0000;" onclick="clearCart()">Warenkorb leeren</button>
     <button class="main" style="background:#008000;" onclick="checkoutCart()">Warenkorb bestellen</button>
   </div>
 </div>
@@ -185,9 +183,11 @@ const products = [...Array(10)].map((_,i)=>({
 // State-Variablen
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let current = 0, slide = 0;
+let currentPage = "list"; // Speichert, auf welcher Seite wir gerade sind
 
 const list = document.getElementById("productsList");
 const countEl = document.getElementById("count");
+const searchInput = document.getElementById("searchInput");
 
 // Initialisierung beim Start
 function init() {
@@ -235,7 +235,7 @@ function openDetail(id){
 
 // Slider Steuerung
 function move(n, e){
-  if(e) e.stopPropagation(); // Verhindert ungewollte Klicks
+  if(e) e.stopPropagation();
   slide += n; 
   showSlide();
 }
@@ -262,6 +262,11 @@ function updateCartCount() {
 
 function openCart(){
  navigateTo("cart");
+ renderCart();
+}
+
+// Separate Funktion zum Zeichnen des Warenkorbs (wichtig für die Live-Suche)
+function renderCart(filterQuery = "") {
  const cartItems = document.getElementById("cartItems");
  const totalEl = document.getElementById("total");
  
@@ -271,7 +276,6 @@ function openCart(){
    return;
  }
  
- // Zähle Frequenzen der IDs im Warenkorb
  const counts = {};
  cart.forEach(id => counts[id] = (counts[id] || 0) + 1);
  
@@ -282,6 +286,11 @@ function openCart(){
    const p = products[id];
    const itemTotal = p.price * counts[id];
    total += itemTotal;
+   
+   // Falls eine Suche aktiv ist, überspringen wir Artikel, die nicht passen
+   if (filterQuery && !p.name.toLowerCase().includes(filterQuery)) {
+     return; 
+   }
    
    cartItems.innerHTML += `
      <div class="cart-item">
@@ -294,11 +303,37 @@ function openCart(){
  totalEl.innerText = `Gesamt: €${total.toFixed(2)}`;
 }
 
-// Navigation (Zentralisiert statt fehleranfälliger Einzelfunktionen)
+// Funktion zum Leeren des Warenkorbs
+function clearCart() {
+  if (cart.length === 0) return;
+  if (confirm("Möchtest du den gesamten Warenkorb wirklich leeren?")) {
+    cart = [];
+    localStorage.removeItem("cart");
+    updateCartCount();
+    openCart();
+  }
+}
+
+// Navigation & Dynamischer Platzhalter für die Suche
 function navigateTo(page) {
+  currentPage = page;
+  searchInput.value = ""; // Suchfeld beim Seitenwechsel leeren
+  
   list.style.display = (page === "list") ? "grid" : "none";
   detailPage.style.display = (page === "detail") ? "block" : "none";
   cartPage.style.display = (page === "cart") ? "block" : "none";
+
+  // Hier ändert sich der Text der Suchleiste dynamisch!
+  if (page === "cart") {
+    searchInput.placeholder = "Warenkorb durchsuchen…";
+  } else {
+    searchInput.placeholder = "Produkte suchen…";
+  }
+  
+  // Wenn wir zur Liste zurückkehren, stellen wir sicher, dass wieder alle Produkte sichtbar sind
+  if (page === "list") {
+    document.querySelectorAll(".product").forEach(p => p.style.display = "block");
+  }
 }
 
 function back(){
@@ -324,12 +359,19 @@ function checkoutCart() {
   location.href = `mailto:online.shop551552@gmail.com?subject=Warenkorb Bestellung&body=${text}`;
 }
 
-// Suche
+// Intelligente Suche (Weiß, auf welcher Seite sie sich befindet)
 function search(){
  const q = searchInput.value.toLowerCase();
- document.querySelectorAll(".product").forEach((p, i) => {
-  p.style.display = products[i].name.toLowerCase().includes(q) ? "block" : "none";
- });
+ 
+ if (currentPage === "cart") {
+   // Wenn wir im Warenkorb sind, filtern wir die Warenkorb-Einträge live
+   renderCart(q);
+ } else {
+   // Wenn wir auf der Produktliste (oder Detailseite) sind, filtern wir das Hauptgitter
+   document.querySelectorAll(".product").forEach((p, i) => {
+    p.style.display = products[i].name.toLowerCase().includes(q) ? "block" : "none";
+   });
+ }
 }
 
 // Dark Mode Switch mit Speicherfunktion
