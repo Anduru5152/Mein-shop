@@ -169,16 +169,99 @@ button.back-btn {
 </div>
 
 <script>
-// Produktdaten generieren
-const products = [...Array(10)].map((_,i)=>({
- id: i,
- name: `Produkt ${i+1}`,
- price: 9.99 + i*10,
- images: [
-  `https://via.placeholder.com/400x300?text=Produkt+${i+1}+1`,
-  `https://via.placeholder.com/400x300?text=Produkt+${i+1}+2`
- ]
-}));
+// DEINE PRODUKTLISTE MIT ALLEN 10 PLATZHALTER-PRODUKTEN
+const products = [
+ {
+  id: 0,
+  name: "Produkt 1",
+  price: 9.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+1+1",
+   "https://via.placeholder.com/400x300?text=Produkt+1+2"
+  ]
+ },
+ {
+  id: 1,
+  name: "Produkt 2",
+  price: 19.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+2+1",
+   "https://via.placeholder.com/400x300?text=Produkt+2+2"
+  ]
+ },
+ {
+  id: 2,
+  name: "Produkt 3",
+  price: 29.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+3+1",
+   "https://via.placeholder.com/400x300?text=Produkt+3+2"
+  ]
+ },
+ {
+  id: 3,
+  name: "Produkt 4",
+  price: 39.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+4+1",
+   "https://via.placeholder.com/400x300?text=Produkt+4+2"
+  ]
+ },
+ {
+  id: 4,
+  name: "Produkt 5",
+  price: 49.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+5+1",
+   "https://via.placeholder.com/400x300?text=Produkt+5+2"
+  ]
+ },
+ {
+  id: 5,
+  name: "Produkt 6",
+  price: 59.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+6+1",
+   "https://via.placeholder.com/400x300?text=Produkt+6+2"
+  ]
+ },
+ {
+  id: 6,
+  name: "Produkt 7",
+  price: 69.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+7+1",
+   "https://via.placeholder.com/400x300?text=Produkt+7+2"
+  ]
+ },
+ {
+  id: 7,
+  name: "Produkt 8",
+  price: 79.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+8+1",
+   "https://via.placeholder.com/400x300?text=Produkt+8+2"
+  ]
+ },
+ {
+  id: 8,
+  name: "Produkt 9",
+  price: 89.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+9+1",
+   "https://via.placeholder.com/400x300?text=Produkt+9+2"
+  ]
+ },
+ {
+  id: 9,
+  name: "Produkt 10",
+  price: 99.99,
+  images: [
+   "https://via.placeholder.com/400x300?text=Produkt+10+1",
+   "https://via.placeholder.com/400x300?text=Produkt+10+2"
+  ]
+ }
+];
 
 // State-Variablen
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
